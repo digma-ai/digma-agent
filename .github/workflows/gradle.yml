@@ -42,6 +42,14 @@ jobs:
     - name: Build with Gradle Wrapper
       run: ./gradlew build
 
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: digma-agent
+        path: ./build/libs/digma-agent*.jar
+        retention-days: 30
+
+
   dependency-submission:
 
     runs-on: ubuntu-latest
@@ -60,11 +68,3 @@ jobs:
     # See: https://github.com/gradle/actions/blob/main/dependency-submission/README.md
     - name: Generate and submit dependency graph
       uses: gradle/actions/dependency-submission@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
-
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: digma-agent
-        path: ./build/libs/digma-agent*.jar
-        retention-days: 30
-
