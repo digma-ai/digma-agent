@@ -57,7 +57,6 @@ public class DigmaAgent {
                                 AnnotationDescription annotationDescription = AnnotationDescription.Latent.Builder.ofType((Class<? extends Annotation>) Class.forName(withSpan, false, classLoader)).build();
 
                                 LOGGER.info("transforming "+typeDescription.getCanonicalName());
-                                System.out.println("transforming "+typeDescription.getCanonicalName());
 
                                 return builder
 //                                        .method(ElementMatchers.isDeclaredBy(typeDescription))
