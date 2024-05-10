@@ -14,6 +14,8 @@ import static org.digma.OtelClassNames.WITH_SPAN_CLASS_NAME;
 
 public class MethodMatchers {
 
+    private MethodMatchers() {
+    }
 
     public static ElementMatcher<? super MethodDescription> create(TypeDescription typeDescription, Configuration configuration) {
 
