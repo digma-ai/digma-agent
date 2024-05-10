@@ -51,7 +51,7 @@ public class DigmaAgent {
 
             //if we fail to load bytebuddy nothing will work
             Class<ByteBuddy> byteBuddyClass = ByteBuddy.class;
-            LOGGER.info("byteBuddy Class loader: " + byteBuddyClass.getClassLoader());
+            LOGGER.info("byteBuddy Class "+byteBuddyClass.getName()+", class loader: " + byteBuddyClass.getClassLoader());
 
             new AgentBuilder.Default()
                     .type(TypeMatchers.create(configuration))

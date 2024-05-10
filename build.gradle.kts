@@ -22,13 +22,7 @@ shadow {
 
 dependencies {
 
-    //don't need to package byte buddy, if opentelemetry agent is in the classpath it inject byte buddy
-    // to system class loader.
-    //when packging byte buddy with relocation there are exceptions when otel tries to instrument byte buddy classes. why
-    // otel tries to instrument relocated byte buddy classes in unknown. if we even need to package and relocate byte buddy
-    // we need to investigate how to relocate it, probably it needs some special relocation.
-    //but as said currently the agent uses byte buddy classes brought by otel agent.
-    compileOnly("net.bytebuddy:byte-buddy:1.14.14")
+    implementation("net.bytebuddy:byte-buddy:1.14.14")
 
     //need that for some useful byte buddy matchers
     implementation("io.opentelemetry.javaagent:opentelemetry-javaagent-extension-api:2.2.0-alpha") {
@@ -92,6 +86,15 @@ tasks {
 
         //must relocate otel classes because they are included in the otel agent
         relocate("io.opentelemetry", "org.digma.io.opentelemetry")
+
+        //we need to package and relocate bytebuddy.
+        // if otel debug is on, on startup of an app with our agent and otel agent, otel emits many exceptions about:
+        //Cannot resolve type description for org.digma.net.bytebuddy.agent.builder.$Proxy31
+        //IMO it can be ignored, its because our agent installs bytebuddy transformer and bytebuddy injects some proxies to the
+        //class loader which otel can't handle.
+        //I started a discussion in GitHub otel repo and waiting for suggestions if these are real errors or can be ignored.
+        //https://github.com/open-telemetry/opentelemetry-java-instrumentation/discussions/11336
+        relocate("net.bytebuddy", "org.digma.net.bytebuddy")
     }
 
 
