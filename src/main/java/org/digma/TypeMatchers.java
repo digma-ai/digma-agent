@@ -1,10 +1,8 @@
 package org.digma;
 
+import net.bytebuddy.description.NamedElement;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
-import net.bytebuddy.matcher.ElementMatchers;
-
-import java.util.List;
 
 import static io.opentelemetry.javaagent.extension.matcher.AgentElementMatchers.extendsClass;
 import static io.opentelemetry.javaagent.extension.matcher.AgentElementMatchers.implementsInterface;
@@ -15,22 +13,30 @@ public class TypeMatchers {
     private TypeMatchers() {
     }
 
-    public static ElementMatcher<? super TypeDescription> create(List<String> packageNames){
+    public static ElementMatcher<? super TypeDescription> create(Configuration configuration) {
 
         ElementMatcher.Junction<? super TypeDescription> packageMatcher = none();
 
-        for (String packageName : packageNames) {
-            packageMatcher = packageMatcher.or(ElementMatchers.nameStartsWith(packageName + "."));
+        for (String packageName : configuration.getIncludePackages()) {
+            packageMatcher = packageMatcher.or(nameStartsWith(packageName + "."));
         }
 
-        return digmaTypeMatcher(packageMatcher);
+        ElementMatcher.Junction<NamedElement> excludeNamesMatcher = none();
+        for (String excludeClass : configuration.getExcludeClasses()) {
+            if (excludeClass.startsWith("*")) {
+                excludeClass = excludeClass.substring(1);
+            }
+            excludeNamesMatcher = excludeNamesMatcher.or(nameEndsWith(excludeClass));
+        }
+
+        return digmaTypeMatcher(packageMatcher, excludeNamesMatcher);
     }
 
 
-
-    public static ElementMatcher<? super TypeDescription> digmaTypeMatcher(ElementMatcher.Junction<? super TypeDescription> packageMatcher) {
+    public static ElementMatcher<? super TypeDescription> digmaTypeMatcher(ElementMatcher.Junction<? super TypeDescription> packageMatcher, ElementMatcher.Junction<? super TypeDescription> excludeNamesMatcher) {
 //        return ElementMatchers.nameStartsWith(packageName + ".")
         return packageMatcher
+                .and(not(excludeNamesMatcher))
                 .and(not(typeFilterByAnnotation()))
                 .and(not(isSynthetic()))
                 .and(not(isEnum()))
@@ -44,8 +50,7 @@ public class TypeMatchers {
     }
 
 
-
-    private static ElementMatcher<? super TypeDescription> hibernate6Types(){
+    private static ElementMatcher<? super TypeDescription> hibernate6Types() {
         return implementsInterface(namedOneOf(
                 "org.hibernate.query.CommonQueryContract",
                 "org.hibernate.SessionFactory",
@@ -54,7 +59,7 @@ public class TypeMatchers {
                 "org.hibernate.Transaction"));
     }
 
-    private  static ElementMatcher<? super TypeDescription> hibernate4Types(){
+    private static ElementMatcher<? super TypeDescription> hibernate4Types() {
         return implementsInterface(namedOneOf(
                 "org.hibernate.Criteria",
                 "org.hibernate.Query",
@@ -64,13 +69,13 @@ public class TypeMatchers {
                 "org.hibernate.Transaction"));
     }
 
-    private  static ElementMatcher<? super TypeDescription> jaxrsTypes(){
+    private static ElementMatcher<? super TypeDescription> jaxrsTypes() {
         return hasSuperType(
                 isAnnotatedWith(named("javax.ws.rs.Path"))
                         .or(declaresMethod(isAnnotatedWith(named("javax.ws.rs.Path")))));
     }
 
-    private  static ElementMatcher<? super TypeDescription> kafkaTypes(){
+    private static ElementMatcher<? super TypeDescription> kafkaTypes() {
         return declaresMethod(isAnnotatedWith(named("org.springframework.kafka.annotation.KafkaListener")))
                 .or(
                         extendsClass(
@@ -78,13 +83,12 @@ public class TypeMatchers {
     }
 
 
-    private  static ElementMatcher<? super TypeDescription> typeFilterByAnnotation() {
+    private static ElementMatcher<? super TypeDescription> typeFilterByAnnotation() {
         return isAnnotatedWith(namedOneOf(
                 "org.junit.jupiter.api.Disabled",
                 "org.junit.Ignore")
         );
     }
-
 
 
 }

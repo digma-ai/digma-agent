@@ -2,21 +2,16 @@ package org.digma;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.builder.AgentBuilder;
+import net.bytebuddy.asm.MemberAttributeExtension;
 import net.bytebuddy.description.annotation.AnnotationDescription;
-import net.bytebuddy.description.type.TypeDescription;
-import net.bytebuddy.dynamic.DynamicType;
-import net.bytebuddy.implementation.SuperMethodCall;
-import net.bytebuddy.matcher.ElementMatchers;
-import net.bytebuddy.utility.JavaModule;
+import org.digma.instrumentation.digma.agent.BuildVersion;
 
 import java.lang.annotation.Annotation;
 import java.lang.instrument.Instrumentation;
-import java.security.ProtectionDomain;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static org.digma.OtelClassNames.WITH_SPAN_CLASS_NAME;
 
 public class DigmaAgent {
 
@@ -27,48 +22,57 @@ public class DigmaAgent {
         startAgent(inst, true);
     }
 
+
     public static void agentmain(String agentArgs, Instrumentation inst) {
         startAgent(inst, false);
     }
 
 
+    @SuppressWarnings("unused")
     private static void startAgent(Instrumentation inst, boolean fromPremain) {
 
-        LOGGER.info("starting Digma agent");
+        LOGGER.info("starting Digma agent " + BuildVersion.getVersion() + " built on " + BuildVersion.getDate());
 
         try {
 
             Configuration configuration = new Configuration();
 
-            List<String> packages = configuration.getExtendedObservabilityPackages();
+            if (configuration.getIncludePackages().isEmpty()) {
+                LOGGER.info("No configured packages for instrumentation in Digma agent, doing nothing.");
+                return;
+            }
 
+
+            LOGGER.info("Digma agent started with configuration: includePackages="
+                    + configuration.getIncludePackages()
+                    + ",excludeClasses=" + configuration.getExcludeClasses()
+                    + ",excludeMethods=" + configuration.getExcludeMethods());
+
+
+            //if we fail to load bytebuddy nothing will work
             Class<ByteBuddy> byteBuddyClass = ByteBuddy.class;
             LOGGER.info("byteBuddy Class loader: " + byteBuddyClass.getClassLoader());
 
             new AgentBuilder.Default()
-//                    .type(ElementMatchers.named("com.digma.otel.javaagent.extension.instrumentation.methods.test.TestClass"))
-                    .type(TypeMatchers.create(packages))
-                    .transform(new AgentBuilder.Transformer() {
-                        @Override
-                        public DynamicType.Builder<?> transform(DynamicType.Builder<?> builder, TypeDescription typeDescription, ClassLoader classLoader, JavaModule module, ProtectionDomain protectionDomain) {
+                    .type(TypeMatchers.create(configuration))
+                    .transform((builder, typeDescription, classLoader, module, protectionDomain) -> {
 
-                            try {
-                                String withSpan = "io_opentelemetry_instrumentation_annotations_WithSpan".replaceAll("_", ".");
-                                AnnotationDescription annotationDescription = AnnotationDescription.Latent.Builder.ofType((Class<? extends Annotation>) Class.forName(withSpan, false, classLoader)).build();
+                        try {
+                            //the WithSpan annotation should be loadable from the same class loader of the application class
+                            @SuppressWarnings("unchecked")
+                            AnnotationDescription annotationDescription =
+                                    AnnotationDescription.Latent.Builder.ofType((Class<? extends Annotation>) Class.forName(WITH_SPAN_CLASS_NAME, false, classLoader)).build();
 
-                                LOGGER.info("transforming "+typeDescription.getCanonicalName());
+                            LOGGER.info("transforming " + typeDescription.getCanonicalName() + " in class loader " + classLoader);
 
-                                return builder
-//                                        .method(ElementMatchers.isDeclaredBy(typeDescription))
-                                        .method(MethodMatchers.create(typeDescription))
-                                        .intercept(SuperMethodCall.INSTANCE)
-                                        .annotateMethod(annotationDescription);
-                            } catch (Throwable e) {
-                                LOGGER.log(Level.SEVERE, "got exception in bytebuddy transformer", e);
-                                return builder;
-                            }
-
+                            return builder
+                                    .visit(new MemberAttributeExtension.ForMethod().annotateMethod(annotationDescription)
+                                            .on(MethodMatchers.create(typeDescription, configuration)));
+                        } catch (Throwable e) {
+                            LOGGER.log(Level.SEVERE, "got exception in bytebuddy transformer", e);
+                            return builder;
                         }
+
                     }).installOn(inst);
 
 
@@ -77,8 +81,6 @@ public class DigmaAgent {
             LOGGER.log(Level.SEVERE, "got exception while starting Digma agent", ex);
         }
     }
-
-
 
 
     public static void main(String[] args) {

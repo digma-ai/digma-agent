@@ -1,10 +1,11 @@
 plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version ("8.1.1")
+    id("edu.sc.seis.version-class") version "1.3.0"
 }
 
-group = "org.digma.otel.wrapper"
-version = "1.0.1"
+group = "org.digma.instrumentation"
+version = "1.0.2"
 
 repositories {
     mavenCentral()
@@ -17,12 +18,21 @@ shadow {
 
 dependencies {
 
+    //don't need to package byte buddy, if opentelemetry agent is in the classpath it inject byte buddy
+    // to system class loader.
+    //when packging byte buddy with relocation there are exceptions when otel tries to instrument byte buddy classes. why
+    // otel tries to instrument relocated byte buddy classes in unknown. if we even need to package and relocate byte buddy
+    // we need to investigate how to relocate it, probably it needs some special relocation.
+    //but as said currently the agent uses byte buddy classes brought by otel agent.
     compileOnly("net.bytebuddy:byte-buddy:1.14.14")
 //    compileOnly("net.bytebuddy:byte-buddy-agent:1.14.14")
 
+    //need that for some useful byte buddy matchers
     implementation("io.opentelemetry.javaagent:opentelemetry-javaagent-extension-api:2.2.0-alpha"){
         isTransitive = false
     }
+
+    implementation("org.jetbrains:annotations:21.0.0")
 
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
@@ -48,9 +58,16 @@ tasks {
 
 
     shadowJar {
+
         archiveBaseName.set("digma-agent")
         archiveClassifier.set("")
-        archiveVersion.set(version.toString())
+
+        //build with no version in release workflow, so we can download latest without version
+        if (project.hasProperty("NoArchiveVersion")) {
+            archiveVersion.set("")
+        }else{
+            archiveVersion.set(version.toString() )
+        }
 
         mergeServiceFiles()
 
@@ -64,6 +81,10 @@ tasks {
             attributes.put("Implementation-Version", "${project.version}")
         }
 
+
+        //we probably don't need that in runtime, if we do then need to relocate them not to cause
+        // confusion in application code
+        exclude("org.jetbrains:annotations")
 
         relocate("io.opentelemetry", "org.digma.io.opentelemetry")
 //        relocate("net.bytebuddy", "org.digma.agent.net.bytebuddy")

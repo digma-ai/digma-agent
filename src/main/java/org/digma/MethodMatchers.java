@@ -2,19 +2,40 @@ package org.digma;
 
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.description.type.TypeDescription;
+import net.bytebuddy.matcher.BooleanMatcher;
 import net.bytebuddy.matcher.ElementMatcher;
+
+import java.util.Objects;
 
 import static io.opentelemetry.javaagent.extension.matcher.AgentElementMatchers.hasSuperMethod;
 import static net.bytebuddy.matcher.ElementMatchers.*;
+import static org.digma.OtelClassNames.SPAN_ATTRIBUTE_CLASS_NAME;
+import static org.digma.OtelClassNames.WITH_SPAN_CLASS_NAME;
 
 public class MethodMatchers {
 
 
-    public static ElementMatcher<? super MethodDescription> create(TypeDescription typeDescription) {
+    public static ElementMatcher<? super MethodDescription> create(TypeDescription typeDescription, Configuration configuration) {
+
+        ElementMatcher.Junction<? super MethodDescription> methodsExclude = none();
+
+        for (String excludeMethod : configuration.getExcludeMethods()) {
+            if (excludeMethod.startsWith("*")) {
+                excludeMethod = excludeMethod.substring(1);
+                methodsExclude = methodsExclude.or(nameEndsWith(excludeMethod));
+            } else if (excludeMethod.contains(".")) {
+                String className = excludeMethod.substring(0, excludeMethod.lastIndexOf("."));
+                String methodName = excludeMethod.substring(excludeMethod.lastIndexOf(".") + 1);
+                methodsExclude = methodsExclude.or(
+                        named(methodName).and(BooleanMatcher.of(Objects.equals(typeDescription.getSimpleName(), className)))
+                );
+            }
+        }
 
         return isMethod()
+                .and(not(methodsExclude))
                 .and(isDeclaredBy(typeDescription))
-                .and(not(namedIgnoreCase("get")))
+//                .and(not(namedIgnoreCase("get"))) //todo: maybe add as default exclude filter
                 .and(not(methodsFilterByAnnotation()))
                 .and(not(isSynthetic()))
                 .and(not(isBridge()))
@@ -29,8 +50,6 @@ public class MethodMatchers {
                 .and(not(isGetter()))
                 .and(not(isNative()))
                 .and(not(nameContains("$")));
-
-
     }
 
 
@@ -56,9 +75,7 @@ public class MethodMatchers {
                                 "javax.ws.rs.PUT"
                         )))
         ).or(
-                //for some reason otel in WithSpanInstrumentation checks for application.io.opentelemetry.instrumentation.annotations.WithSpan
-                isAnnotatedWith(namedOneOf("io.opentelemetry.instrumentation.annotations.WithSpan",
-                        "application.io.opentelemetry.instrumentation.annotations.WithSpan"))
+                isAnnotatedWith(namedOneOf(WITH_SPAN_CLASS_NAME, SPAN_ATTRIBUTE_CLASS_NAME))
         ).or(
                 isAnnotatedWith(namedOneOf(
                         "org.junit.jupiter.api.Test",
