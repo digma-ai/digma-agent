@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "org.digma.instrumentation"
-version = "1.0.5"
+version = "1.0.6"
 
 repositories {
     mavenCentral()
@@ -35,7 +35,8 @@ dependencies {
         isTransitive = false
     }
 
-    implementation("org.jetbrains:annotations:21.0.0")
+    //we don't need those annotations at runtime, it's only for development in Idea
+    compileOnly("org.jetbrains:annotations:21.0.0")
 
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
@@ -89,12 +90,7 @@ tasks {
         }
 
 
-        //we probably don't need that in runtime, if we do then need to relocate them not to cause
-        // confusion in application code
-        dependencies {
-            exclude(dependency("org.jetbrains:annotations"))
-        }
-
+        //must relocate otel classes because they are included in the otel agent
         relocate("io.opentelemetry", "org.digma.io.opentelemetry")
     }
 
