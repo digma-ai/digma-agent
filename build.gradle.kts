@@ -1,3 +1,7 @@
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+
 plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version ("8.1.1")
@@ -81,6 +85,7 @@ tasks {
             attributes["Created-By"] = "Gradle ${gradle.gradleVersion}"
             attributes["Build-OS"] = "${System.getProperty("os.name")} ${System.getProperty("os.arch")} ${System.getProperty("os.version")}"
             attributes["Build-Jdk"] = "${System.getProperty("java.version")} ${System.getProperty("java.vendor")} ${System.getProperty("java.vm.version")}"
+            attributes["Build-Timestamp"] = ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
         }
 
 
