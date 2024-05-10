@@ -34,7 +34,6 @@ public class TypeMatchers {
 
 
     public static ElementMatcher<? super TypeDescription> digmaTypeMatcher(ElementMatcher.Junction<? super TypeDescription> packageMatcher, ElementMatcher.Junction<? super TypeDescription> excludeNamesMatcher) {
-//        return ElementMatchers.nameStartsWith(packageName + ".")
         return packageMatcher
                 .and(not(excludeNamesMatcher))
                 .and(not(typeFilterByAnnotation()))
