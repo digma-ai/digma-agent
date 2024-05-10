@@ -25,7 +25,6 @@ dependencies {
     // we need to investigate how to relocate it, probably it needs some special relocation.
     //but as said currently the agent uses byte buddy classes brought by otel agent.
     compileOnly("net.bytebuddy:byte-buddy:1.14.14")
-//    compileOnly("net.bytebuddy:byte-buddy-agent:1.14.14")
 
     //need that for some useful byte buddy matchers
     implementation("io.opentelemetry.javaagent:opentelemetry-javaagent-extension-api:2.2.0-alpha"){
@@ -84,10 +83,11 @@ tasks {
 
         //we probably don't need that in runtime, if we do then need to relocate them not to cause
         // confusion in application code
-        exclude("org.jetbrains:annotations")
+        dependencies {
+            exclude(dependency("org.jetbrains:annotations"))
+        }
 
         relocate("io.opentelemetry", "org.digma.io.opentelemetry")
-//        relocate("net.bytebuddy", "org.digma.agent.net.bytebuddy")
     }
 
 
