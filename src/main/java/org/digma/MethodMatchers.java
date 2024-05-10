@@ -35,8 +35,8 @@ public class MethodMatchers {
         }
 
         return isMethod()
-                .and(not(methodsExclude))
                 .and(isDeclaredBy(typeDescription))
+                .and(not(methodsExclude))
 //                .and(not(namedIgnoreCase("get"))) //todo: maybe add as default exclude filter
                 .and(not(methodsFilterByAnnotation()))
                 .and(not(isSynthetic()))
