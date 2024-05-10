@@ -27,7 +27,7 @@ dependencies {
     compileOnly("net.bytebuddy:byte-buddy:1.14.14")
 
     //need that for some useful byte buddy matchers
-    implementation("io.opentelemetry.javaagent:opentelemetry-javaagent-extension-api:2.2.0-alpha"){
+    implementation("io.opentelemetry.javaagent:opentelemetry-javaagent-extension-api:2.2.0-alpha") {
         isTransitive = false
     }
 
@@ -64,20 +64,23 @@ tasks {
         //build with no version in release workflow, so we can download latest without version
         if (project.hasProperty("NoArchiveVersion")) {
             archiveVersion.set("")
-        }else{
-            archiveVersion.set(version.toString() )
+        } else {
+            archiveVersion.set(version.toString())
         }
 
         mergeServiceFiles()
 
         manifest {
-            attributes.put("Main-Class", "org.digma.DigmaAgent")
-            attributes.put("Agent-Class", "org.digma.DigmaAgent")
-            attributes.put("Premain-Class", "org.digma.DigmaAgent")
-            attributes.put("Can-Redefine-Classes", "true")
-            attributes.put("Can-Retransform-Classes", "true")
-            attributes.put("Implementation-Vendor", "Digma")
-            attributes.put("Implementation-Version", "${project.version}")
+            attributes["Main-Class"] = "org.digma.DigmaAgent"
+            attributes["Agent-Class"] = "org.digma.DigmaAgent"
+            attributes["Premain-Class"] = "org.digma.DigmaAgent"
+            attributes["Can-Redefine-Classes"] = "true"
+            attributes["Can-Retransform-Classes"] = "true"
+            attributes["Implementation-Vendor"] = "Digma"
+            attributes["Implementation-Version"] = "${project.version}"
+            attributes["Created-By"] = "Gradle ${gradle.gradleVersion}"
+            attributes["Build-OS"] = "${System.getProperty("os.name")} ${System.getProperty("os.arch")} ${System.getProperty("os.version")}"
+            attributes["Build-Jdk"] = "${System.getProperty("java.version")} ${System.getProperty("java.vendor")} ${System.getProperty("java.vm.version")}"
         }
 
 
