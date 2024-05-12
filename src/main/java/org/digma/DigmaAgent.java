@@ -31,11 +31,20 @@ public class DigmaAgent {
     @SuppressWarnings("unused")
     private static void startAgent(Instrumentation inst, boolean fromPremain) {
 
+        //todo: add Digma prefix to all log messages
         LOGGER.info("starting Digma agent " + BuildVersion.getVersion() + " built on " + BuildVersion.getDate());
+
 
         try {
 
             Configuration configuration = new Configuration();
+
+            //maybeInjectOtelApiToSystemClassLoader returns false it means something went wrong with injection, and
+            // we can't use the agent. a message will be logged and user should act according to instructions in the log
+            if (!maybeInjectOtelApiToSystemClassLoader(configuration, inst)) {
+                return;
+            }
+
 
             if (configuration.getIncludePackages().isEmpty()) {
                 LOGGER.info("No configured packages for instrumentation in Digma agent, doing nothing.");
@@ -51,7 +60,7 @@ public class DigmaAgent {
 
             //if we fail to load bytebuddy nothing will work
             Class<ByteBuddy> byteBuddyClass = ByteBuddy.class;
-            LOGGER.info("byteBuddy Class "+byteBuddyClass.getName()+", class loader: " + byteBuddyClass.getClassLoader());
+            LOGGER.info("byteBuddy Class " + byteBuddyClass.getName() + ", class loader: " + byteBuddyClass.getClassLoader());
 
             new AgentBuilder.Default()
                     .type(TypeMatchers.create(configuration))
@@ -83,8 +92,23 @@ public class DigmaAgent {
     }
 
 
-    public static void main(String[] args) {
+    private static boolean maybeInjectOtelApiToSystemClassLoader(Configuration configuration, Instrumentation inst) {
+        if (configuration.shouldInjectOtelApiToSystemClassLoader()) {
+            LOGGER.info("injecting otel api to system class loader.");
+            try {
+                OtelApiInjector.injectOtelApiJarToSystemClassLoader(LOGGER,inst);
+            } catch (UnsupportedOperationException e) {
+                LOGGER.log(Level.SEVERE, "got exception trying to inject otel api to system class loader. maybe this jvm doesn't support injecting a jar to " +
+                        "system class loader. please add otel api top the classpath in a different way", e);
+                return false;
+            } catch (Throwable e) {
+                LOGGER.log(Level.SEVERE, "got exception trying to inject otel api to system class loader. " +
+                        "please fix the issue and try again , or add otel api to the classpath in a different way", e);
+                return false;
+            }
+        }
 
+        return true;
     }
 
 }

@@ -24,6 +24,9 @@ public class Configuration {
     private static final String DIGMA_AUTO_INSTRUMENT_PACKAGES_EXCLUDE_NAMES_SYSTEM_PROPERTY = "digma.autoinstrument.packages.exclude.names";
     private static final String DIGMA_AUTO_INSTRUMENT_PACKAGES_EXCLUDE_NAMES_ENV_VAR = "DIGMA_AUTOINSTRUMENT_PACKAGES_EXCLUDE_NAMES";
 
+    private static final String SHOULD_INJECT_OTEL_API_TO_SYSTEM_CLASS_LOADER_SYSTEM_PROPERTY = "digma.agent.injectOtelApiToSystemClassLoader";
+    private static final String SHOULD_INJECT_OTEL_API_TO_SYSTEM_CLASS_LOADER_ENV_VAR = "DIGMA_AGENT_INJECT_OTEL_API_TO_SYSTEM_CLASS_LOADER";
+
 
     private final List<String> includePackages;
     private final List<String> excludeClasses;
@@ -35,6 +38,17 @@ public class Configuration {
         excludeClasses = getExcludeClassNames();
         excludeMethods = getExcludeMethodNames();
     }
+
+
+    public boolean shouldInjectOtelApiToSystemClassLoader(){
+        String value = getEnvOrSystemProperty(SHOULD_INJECT_OTEL_API_TO_SYSTEM_CLASS_LOADER_SYSTEM_PROPERTY);
+        if (value == null){
+            value = getEnvOrSystemProperty(SHOULD_INJECT_OTEL_API_TO_SYSTEM_CLASS_LOADER_ENV_VAR);
+        }
+
+        return Boolean.valueOf(value);
+    }
+
 
     @NotNull
     public List<String> getIncludePackages() {

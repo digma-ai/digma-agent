@@ -19,6 +19,11 @@ shadow {
 
 }
 
+val otelApiJar: Configuration by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+}
+
 
 dependencies {
 
@@ -36,13 +41,16 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
-}
 
-tasks.test {
-    useJUnitPlatform()
+
+    otelApiJar("io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations:2.1.0")
 }
 
 tasks {
+
+    test {
+        useJUnitPlatform()
+    }
 
     jar {
         enabled = false
@@ -95,11 +103,29 @@ tasks {
         //I started a discussion in GitHub otel repo and waiting for suggestions if these are real errors or can be ignored.
         //https://github.com/open-telemetry/opentelemetry-java-instrumentation/discussions/11336
         relocate("net.bytebuddy", "org.digma.net.bytebuddy")
+
     }
 
 
     build {
         finalizedBy("shadowJar")
+    }
+
+    val packageOtelJar by registering(Copy::class) {
+        val src = otelApiJar.files
+        val dest = File(project.sourceSets.main.get().output.resourcesDir, "otelJars")
+        from(src)
+        into(dest)
+        //bug in shadowJar that it ignores .jar files in the resource folder, the suggestion in the issue was to rename it
+        // to something other than jar. the agent code will rename to .jar when it uses it.
+        //see https://github.com/johnrengelman/shadow/issues/276
+        rename {
+            it.replace(".jar",".myjar")
+        }
+    }
+
+    processResources{
+        dependsOn(packageOtelJar)
     }
 
 }
