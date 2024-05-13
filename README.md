@@ -33,3 +33,14 @@ run the application, the debugger should immediately wait for remote debugger to
 start the remote debug launcher.
 the debugger will stop at the breakpoint in premain, and you can debug any part of the agent.<br>
 don't forget to remove it all when finished developing.<br>
+
+
+## Known error logs messages
+When digma agent and otel agent are on the same application otel agent will emit some debug logs with stacktrace that look like errors but 
+are actually just debug and can be ignored.<br>
+errors like:<br>
+```Cannot resolve type description for org.digma.net.bytebuddy.agent.builder.$Proxy31```
+see https://github.com/open-telemetry/opentelemetry-java-instrumentation/discussions/11336#discussioncomment-9419936
+
+
+
