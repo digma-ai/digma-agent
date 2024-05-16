@@ -15,9 +15,6 @@ repositories {
     mavenCentral()
 }
 
-shadow {
-
-}
 
 val otelApiJar: Configuration by configurations.creating {
     isCanBeConsumed = false
