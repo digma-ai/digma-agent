@@ -27,11 +27,17 @@ public class Configuration {
     private static final String SHOULD_INJECT_OTEL_API_TO_SYSTEM_CLASS_LOADER_SYSTEM_PROPERTY = "digma.agent.injectOtelApiToSystemClassLoader";
     private static final String SHOULD_INJECT_OTEL_API_TO_SYSTEM_CLASS_LOADER_ENV_VAR = "DIGMA_AGENT_INJECT_OTEL_API_TO_SYSTEM_CLASS_LOADER";
 
+    //turn on this flag to see debug logging from the agent. logging will always be in INFO level because the application may not
+    // configure JUL for debug, but we hide debug logging behind this argument
+    private static final String DEBUG_SYSTEM_PROPERTY = "digma.agent.debug";
+    private static final String DEBUG_ENV_VAR = "DIGMA_AGENT_DEBUG";
+
 
     private final List<String> includePackages;
     private final List<String> excludeClasses;
     private final List<String> excludeMethods;
 
+    private static final Configuration INSTANCE = new Configuration();
 
     public Configuration() {
         includePackages = getExtendedObservabilityPackages();
@@ -39,14 +45,29 @@ public class Configuration {
         excludeMethods = getExcludeMethodNames();
     }
 
+    //this getInstance doesn't need to be thread safe and a real singleton. nothing will happen if we have more then one instance.
+    public static Configuration getInstance() {
+        return INSTANCE;
+    }
 
-    public boolean shouldInjectOtelApiToSystemClassLoader(){
-        String value = getEnvOrSystemProperty(SHOULD_INJECT_OTEL_API_TO_SYSTEM_CLASS_LOADER_SYSTEM_PROPERTY);
-        if (value == null){
-            value = getEnvOrSystemProperty(SHOULD_INJECT_OTEL_API_TO_SYSTEM_CLASS_LOADER_ENV_VAR);
+
+    private boolean getBoolean(String systemPropertyName, String envPropertyName) {
+        String value = getEnvOrSystemProperty(systemPropertyName);
+        if (value == null) {
+            value = getEnvOrSystemProperty(envPropertyName);
         }
 
-        return Boolean.valueOf(value);
+        return Boolean.parseBoolean(value);
+    }
+
+
+    public boolean shouldInjectOtelApiToSystemClassLoader() {
+        return getBoolean(SHOULD_INJECT_OTEL_API_TO_SYSTEM_CLASS_LOADER_SYSTEM_PROPERTY,
+                SHOULD_INJECT_OTEL_API_TO_SYSTEM_CLASS_LOADER_ENV_VAR);
+    }
+
+    public boolean isDebug() {
+        return getBoolean(DEBUG_SYSTEM_PROPERTY, DEBUG_ENV_VAR);
     }
 
 
@@ -116,7 +137,7 @@ public class Configuration {
             excludeNames = getEnvOrSystemProperty(DIGMA_AUTO_INSTRUMENT_PACKAGES_EXCLUDE_NAMES_ENV_VAR);
         }
         if (excludeNames != null) {
-            return Arrays.asList(excludeNames.split(";")).stream().filter(s -> !s.isEmpty()).collect(Collectors.toList());
+            return Arrays.stream(excludeNames.split(";")).filter(s -> !s.isEmpty()).collect(Collectors.toList());
         } else {
             return Collections.emptyList();
         }
