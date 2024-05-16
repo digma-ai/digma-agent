@@ -66,6 +66,11 @@ public class Configuration {
                 SHOULD_INJECT_OTEL_API_TO_SYSTEM_CLASS_LOADER_ENV_VAR);
     }
 
+    public boolean shouldInjectOtelApiToSystemClassLoaderExist() {
+        return getEnvOrSystemProperty(SHOULD_INJECT_OTEL_API_TO_SYSTEM_CLASS_LOADER_SYSTEM_PROPERTY) != null ||
+                getEnvOrSystemProperty(SHOULD_INJECT_OTEL_API_TO_SYSTEM_CLASS_LOADER_ENV_VAR) != null;
+    }
+
     public boolean isDebug() {
         return getBoolean(DEBUG_SYSTEM_PROPERTY, DEBUG_ENV_VAR);
     }
