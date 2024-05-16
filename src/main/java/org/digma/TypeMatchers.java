@@ -38,6 +38,7 @@ public class TypeMatchers {
                 .and(not(excludeNamesMatcher))
                 .and(not(typeFilterByAnnotation()))
                 .and(not(isSynthetic()))
+                .and(not(isRecord()))
                 .and(not(isEnum()))
                 .and(not(extendsClass(named("io.grpc.ServerBuilder"))))
                 .and(not(jaxrsTypes()))
@@ -45,6 +46,7 @@ public class TypeMatchers {
                 .and(not(implementsInterface(named("org.apache.camel.CamelContext"))))
                 .and(not(hibernate6Types()))
                 .and(not(hibernate4Types()))
+                .and(not(isKotlinDataClass()))
                 .and(not(nameContains("$")));
     }
 
@@ -88,6 +90,15 @@ public class TypeMatchers {
                 "org.junit.Ignore")
         );
     }
+
+
+    //some characteristics of kotlin data classes. if found in regular classes these classes will not be instrumented.
+    private static ElementMatcher<? super TypeDescription> isKotlinDataClass(){
+        return declaresMethod(named("copy"))
+                .and(declaresMethod(nameStartsWith("component")));
+    }
+
+
 
 
 }
