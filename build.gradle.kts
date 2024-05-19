@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "org.digma.instrumentation"
-version = "1.0.12"
+version = "1.0.13-SNAPSHOT"
 
 repositories {
     mavenCentral()
