@@ -11,24 +11,36 @@ import java.util.stream.Collectors;
 
 public class Configuration {
 
-    //list of package names seperated by semicolon
-    //digma.autoinstrument.packages=my.pkg1;my.pkg2
+    /**
+     * list of package names to instrument seperated by semicolon.
+     * for example: digma.autoinstrument.packages=my.pkg1;my.pkg2
+     */
     private static final String DIGMA_AUTO_INSTRUMENT_PACKAGES_SYSTEM_PROPERTY = "digma.autoinstrument.packages";
     private static final String DIGMA_AUTO_INSTRUMENT_PACKAGES_ENV_VAR = "DIGMA_AUTOINSTRUMENT_PACKAGES";
 
-    //exclude names should be sent as a list seperated by semicolon.
-    //the list may include simple class names to exclude a whole class, or simple class name and method name seperated by dot to exclude specific
-    // methods on class, or *String to exclude anything that ends with String.
-    //nested and inner classes should be seperated by $.
-    //digma.autoinstrument.packages.exclude.names=MyClass;MyOtherClass.myOtherMethod;MyClass$MyNestedClass;*get
+    /**
+     * exclude names should be sent as a list seperated by semicolon.
+     * the list may include simple class names to exclude a whole class, or simple class name and method name seperated by dot to exclude specific
+     * methods on class, or *String to exclude anything that ends with String.
+     * nested and inner classes should be seperated by $.
+     * for example: digma.autoinstrument.packages.exclude.names=MyClass;MyOtherClass.myOtherMethod;MyClass$MyNestedClass;*get
+     */
     private static final String DIGMA_AUTO_INSTRUMENT_PACKAGES_EXCLUDE_NAMES_SYSTEM_PROPERTY = "digma.autoinstrument.packages.exclude.names";
     private static final String DIGMA_AUTO_INSTRUMENT_PACKAGES_EXCLUDE_NAMES_ENV_VAR = "DIGMA_AUTOINSTRUMENT_PACKAGES_EXCLUDE_NAMES";
 
+    /**
+     * argument to control injection of otel api to system class loader.
+     * if it doesn't exist the agent will check if @WithSpan exists in the system class loader, if not, it will inject otel api to the system class loader.
+     * if it exists and is true the agent will inject otel api to system class loader without check first if @WithSpan exists.
+     * if it exists and is false the agent will not inject otel api to system class loader.
+     */
     private static final String SHOULD_INJECT_OTEL_API_TO_SYSTEM_CLASS_LOADER_SYSTEM_PROPERTY = "digma.agent.injectOtelApiToSystemClassLoader";
     private static final String SHOULD_INJECT_OTEL_API_TO_SYSTEM_CLASS_LOADER_ENV_VAR = "DIGMA_AGENT_INJECT_OTEL_API_TO_SYSTEM_CLASS_LOADER";
 
-    //turn on this flag to see debug logging from the agent. logging will always be in INFO level because the application may not
-    // configure JUL for debug, but we hide debug logging behind this argument
+    /**
+     * turn on this flag to see debug logging from the agent. logging will always be in INFO level because the application may not
+     * configure JUL for debug, but we hide debug logging behind this argument
+     */
     private static final String DEBUG_SYSTEM_PROPERTY = "digma.agent.debug";
     private static final String DEBUG_ENV_VAR = "DIGMA_AGENT_DEBUG";
 
