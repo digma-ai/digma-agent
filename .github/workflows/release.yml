@@ -77,7 +77,7 @@ jobs:
           git add version.properties
           git commit -m "increment version after release to ${VERSION}"
           git push
-#
+
 #  if using skip ci like this: git commit -m "increment version after release to ${VERSION} [skip ci]"
 #   then need this step to create a new release draft
 #
