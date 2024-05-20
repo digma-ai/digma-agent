@@ -75,7 +75,6 @@ jobs:
           git pull
           git stash pop
           git add version.properties
-          git add CHANGELOG.md
           git commit -m "increment version after release to ${VERSION}"
           git push
 #
