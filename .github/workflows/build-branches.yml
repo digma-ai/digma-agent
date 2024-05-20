@@ -1,0 +1,13 @@
+
+name: Build all branches (!main)
+
+on:
+  push:
+    branches: [ '**','!main' ]
+
+jobs:
+  build-workflow:
+    uses: ./.github/workflows/build-workflow.yml
+    with:
+      ref-name: ${{ github.ref_name }}
+    secrets: inherit
