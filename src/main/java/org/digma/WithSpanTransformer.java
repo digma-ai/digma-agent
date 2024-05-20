@@ -15,7 +15,7 @@ public class WithSpanTransformer {
 
     public static void install(Instrumentation inst) {
 
-        Log.info("installing withSpanTransformer");
+        Log.debug("installing withSpanTransformer");
 
         new AgentBuilder.Default()
                 .type(TypeMatchers.create(Configuration.getInstance()))
