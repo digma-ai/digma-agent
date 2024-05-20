@@ -4,12 +4,13 @@ import java.time.format.DateTimeFormatter
 
 plugins {
     id("java")
+    id("semantic-version")
     id("com.github.johnrengelman.shadow") version ("8.1.1")
     id("edu.sc.seis.version-class") version "1.3.0"
 }
 
 group = "org.digma.instrumentation"
-version = "1.0.14-SNAPSHOT"
+version = common.semanticversion.getSemanticVersion(project)
 
 repositories {
     mavenCentral()

@@ -9,9 +9,9 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "**" ]
+    branches: [ "a**" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "amain" ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
