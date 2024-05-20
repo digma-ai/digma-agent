@@ -75,13 +75,11 @@ jobs:
           git pull
           git stash pop
           git add version.properties
-          git commit -m "increment version after release to ${VERSION}"
+          git commit -m "increment version after release to ${VERSION} [skip ci]"
           git push
 
-#  if using skip ci like this: git commit -m "increment version after release to ${VERSION} [skip ci]"
-#   then need this step to create a new release draft
-#
-#  prepare-release-draft:
-#    needs: [ update-to-next-version ]
-#    uses: ./.github/workflows/release-draft.yml
-#    secrets: inherit
+  #because using skip ci then we need this step to create a new release draft instead of running a build of main
+  prepare-release-draft:
+    needs: [ update-to-next-version ]
+    uses: ./.github/workflows/release-draft.yml
+    secrets: inherit
