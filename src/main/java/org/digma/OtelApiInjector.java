@@ -18,7 +18,7 @@ public class OtelApiInjector {
     public static void injectOtelApiJarToSystemClassLoader() throws IOException {
         List<JarFile> jarFiles = createOtelJarFiles();
         for (JarFile jarFile : jarFiles) {
-            Log.info("injecting to system class loader , jar file:" + jarFile.getName());
+            Log.debug("injecting to system class loader , jar file:" + jarFile.getName());
             InstrumentationHolder.instrumentation.appendToSystemClassLoaderSearch(jarFile);
         }
     }
@@ -39,7 +39,7 @@ public class OtelApiInjector {
         List<String> resourcePaths = getResourceFolderFiles();
         List<File> files = new ArrayList<>();
         for (String path : resourcePaths) {
-            Log.info("creating file from resource path:" + path);
+            Log.debug("creating file from resource path:" + path);
             InputStream resourceStream = OtelApiInjector.class.getResourceAsStream(path);
             if (resourceStream == null) {
                 throw new FileNotFoundException("could not find resource " + path);

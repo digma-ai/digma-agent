@@ -32,7 +32,7 @@ public class DigmaAgent {
 
 
             if (configuration.getIncludePackages().isEmpty()) {
-                Log.info("No configured packages for instrumentation in Digma agent, doing nothing.");
+                Log.debug("No configured packages for instrumentation in Digma agent, doing nothing.");
                 return;
             }
 
@@ -55,7 +55,7 @@ public class DigmaAgent {
             makeSureWithSpanClassIsAvailable();
 
 
-            Log.info("Digma agent started with configuration: includePackages="
+            Log.debug("Digma agent started with configuration: includePackages="
                     + configuration.getIncludePackages()
                     + ",excludeClasses=" + configuration.getExcludeClasses()
                     + ",excludeMethods=" + configuration.getExcludeMethods());
@@ -63,7 +63,7 @@ public class DigmaAgent {
 
             //if we fail to load bytebuddy nothing will work
             Class<ByteBuddy> byteBuddyClass = ByteBuddy.class;
-            Log.info("byteBuddy Class " + byteBuddyClass.getName() + ", class loader: " + byteBuddyClass.getClassLoader());
+            Log.debug("byteBuddy Class " + byteBuddyClass.getName() + ", class loader: " + byteBuddyClass.getClassLoader());
 
             WithSpanTransformer.install(inst);
 
@@ -78,7 +78,7 @@ public class DigmaAgent {
 
         //if configuration is true inject and return
         if (Configuration.getInstance().shouldInjectOtelApiToSystemClassLoader()) {
-            Log.info("configuration for injecting otel api to system class loader is true, injecting otel api to system class loader.");
+            Log.debug("configuration for injecting otel api to system class loader is true, injecting otel api to system class loader.");
             injectOtelApiToSystemClassLoader();
             return;
         }
@@ -87,18 +87,18 @@ public class DigmaAgent {
         //if configuration exists and is false quit and don't inject
         if (Configuration.getInstance().shouldInjectOtelApiToSystemClassLoaderExist() &&
                 !Configuration.getInstance().shouldInjectOtelApiToSystemClassLoader()) {
-            Log.info("configuration for injecting otel api to system class loader is false, not injecting.");
+            Log.debug("configuration for injecting otel api to system class loader is false, not injecting.");
             return;
         }
 
         //else try to inject if WithSpan is not in system classpath
         try {
-            Log.info("checking if WithSpan class is available in classpath");
+            Log.debug("checking if WithSpan class is available in classpath");
             Class.forName(WITH_SPAN_CLASS_NAME);
-            Log.info("WithSpan class is available in classpath");
+            Log.debug("WithSpan class is available in classpath");
 
         } catch (ClassNotFoundException e) {
-            Log.info("WithSpan class is NOT available in classpath, trying to inject otel api");
+            Log.debug("WithSpan class is NOT available in classpath, trying to inject otel api");
             injectOtelApiToSystemClassLoader();
         }
     }
@@ -106,11 +106,11 @@ public class DigmaAgent {
     private static void injectOtelApiToSystemClassLoader() {
         if (Configuration.getInstance().shouldInjectOtelApiToSystemClassLoaderExist() &&
                 !Configuration.getInstance().shouldInjectOtelApiToSystemClassLoader()) {
-            Log.info("injectOtelApiToSystemClassLoader was called but configuration is false, not injecting");
+            Log.debug("injectOtelApiToSystemClassLoader was called but configuration is false, not injecting");
             return;
         }
 
-        Log.info("injecting otel api to system class loader.");
+        Log.debug("injecting otel api to system class loader.");
         try {
             OtelApiInjector.injectOtelApiJarToSystemClassLoader();
         } catch (UnsupportedOperationException e) {
