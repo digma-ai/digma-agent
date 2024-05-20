@@ -2,6 +2,7 @@ name: Build workflow
 
 on:
   workflow_call:
+    inputs:
       ref-name:
         required: true
         type: string
