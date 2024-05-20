@@ -1,5 +1,5 @@
 
-name: Build all branches (!main)
+name: Build main
 
 on:
   push:
