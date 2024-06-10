@@ -51,6 +51,7 @@ public class MethodMatchers {
                 .and(not(isSetter()))
                 .and(not(isGetter()))
                 .and(not(isNative()))
+                .and(not(returns(named("kotlinx.coroutines.flow.Flow"))))
                 .and(not(nameContains("$")));
     }
 
