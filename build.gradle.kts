@@ -41,7 +41,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
 
 
-    otelApiJar("io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations:2.1.0")
+    otelApiJar("com.squareup.okhttp:okhttp:2.7.5")
 }
 
 tasks {
@@ -98,7 +98,6 @@ tasks {
         //Cannot resolve type description for org.digma.net.bytebuddy.agent.builder.$Proxy31
         //IMO it can be ignored, its because our agent installs bytebuddy transformer and bytebuddy injects some proxies to the
         //class loader which otel can't handle.
-        //I started a discussion in GitHub otel repo and waiting for suggestions if these are real errors or can be ignored.
         //https://github.com/open-telemetry/opentelemetry-java-instrumentation/discussions/11336
         relocate("net.bytebuddy", "org.digma.net.bytebuddy")
 
