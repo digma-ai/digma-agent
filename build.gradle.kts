@@ -100,7 +100,7 @@ tasks {
         //class loader which otel can't handle.
         //I started a discussion in GitHub otel repo and waiting for suggestions if these are real errors or can be ignored.
         //https://github.com/open-telemetry/opentelemetry-java-instrumentation/discussions/11336
-        relocate("net.bytebuddy", "org.digma.net.bytebuddy")
+        //relocate("net.bytebuddy", "org.digma.net.bytebuddy")
 
     }
 
