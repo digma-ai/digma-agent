@@ -38,6 +38,6 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: digma-agent
+          name: digma-agent.zip
           path: ./build/libs/digma-agent*.jar
           retention-days: 30
