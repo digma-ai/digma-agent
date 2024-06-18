@@ -6,6 +6,8 @@ import org.digma.instrumentation.digma.agent.BuildVersion;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Field;
 
+import static org.digma.Configuration.JAVA_VERSION;
+import static org.digma.Configuration.OS_NAME;
 import static org.digma.OtelClassNames.WITH_SPAN_CLASS_NAME;
 
 public class DigmaAgent {
@@ -24,7 +26,7 @@ public class DigmaAgent {
     @SuppressWarnings("unused")
     private static void startAgent(Instrumentation inst, boolean fromPremain) {
 
-        Log.info("starting Digma agent " + BuildVersion.getVersion() + " built on " + BuildVersion.getDate());
+        Log.info("starting Digma agent " + BuildVersion.getVersion() + " built on " + BuildVersion.getDate() + ", os=" + OS_NAME + ", java version=" + JAVA_VERSION);
 
 
         try {
@@ -80,6 +82,14 @@ public class DigmaAgent {
 
     //see : https://github.com/raphw/byte-buddy/discussions/1658
     private static void installInstrumentationOnBytebuddyAgent(Instrumentation myInstrumentation) {
+
+        if (!OS_NAME.toLowerCase().startsWith("mac")) {
+            return;
+        }
+        if(!JAVA_VERSION.contains("17")){
+            return;
+        }
+
         try {
             Log.debug("Installing Instrumentation on ByteBuddy Installer");
             //need to change the Installer fq name otherwise gradle shadow will relocate it
