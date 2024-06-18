@@ -11,6 +11,10 @@ import java.util.stream.Collectors;
 
 public class Configuration {
 
+    public static final String OS_NAME = System.getProperty("os.name");
+    public static final String JAVA_VERSION = System.getProperty("java.version");
+
+
     /**
      * list of package names to instrument seperated by semicolon.
      * for example: digma.autoinstrument.packages=my.pkg1;my.pkg2
