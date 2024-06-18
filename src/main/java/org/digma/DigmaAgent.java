@@ -26,8 +26,6 @@ public class DigmaAgent {
 
         Log.info("starting Digma agent " + BuildVersion.getVersion() + " built on " + BuildVersion.getDate());
 
-        installInstrumentationOnBytebuddyAgent(inst);
-
 
         try {
 
@@ -38,6 +36,9 @@ public class DigmaAgent {
                 Log.debug("No configured packages for instrumentation in Digma agent, doing nothing.");
                 return;
             }
+
+            installInstrumentationOnBytebuddyAgent(inst);
+
 
             //this must be the first thing the agent does, other classes rely on non-null
             InstrumentationHolder.instrumentation = inst;
@@ -76,16 +77,24 @@ public class DigmaAgent {
         }
     }
 
-    private static void installInstrumentationOnBytebuddyAgent(Instrumentation inst) {
+
+    //see : https://github.com/raphw/byte-buddy/discussions/1658
+    private static void installInstrumentationOnBytebuddyAgent(Instrumentation myInstrumentation) {
         try {
             Log.debug("Installing Instrumentation on ByteBuddy Installer");
+            //need to change the Installer fq name otherwise gradle shadow will relocate it
             Class<?> byteBuddyInstaller = Class.forName("net_bytebuddy_agent_Installer".replaceAll("_", "."), false, ClassLoader.getSystemClassLoader());
             Field instrumentationField = byteBuddyInstaller.getDeclaredField("instrumentation");
             instrumentationField.setAccessible(true);
-            instrumentationField.set(null, inst);
+
+            Instrumentation instrumentation = (Instrumentation) instrumentationField.get(null);
+            if (instrumentation == null) {
+                instrumentationField.set(null, myInstrumentation);
+            }
+            instrumentationField.setAccessible(false);
             Log.debug("Installation of Instrumentation on ByteBuddy Installer succeeded");
-        } catch (Throwable e) {
-            Log.error("Could not install instrumentation on bytebuddy Installer", e);
+        } catch (Exception e) {
+            Log.debug("Could not install instrumentation on bytebuddy Installer " + e);
         }
     }
 
