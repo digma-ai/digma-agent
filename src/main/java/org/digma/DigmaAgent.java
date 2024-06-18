@@ -4,6 +4,7 @@ import net.bytebuddy.ByteBuddy;
 import org.digma.instrumentation.digma.agent.BuildVersion;
 
 import java.lang.instrument.Instrumentation;
+import java.lang.reflect.Field;
 
 import static org.digma.OtelClassNames.WITH_SPAN_CLASS_NAME;
 
@@ -24,6 +25,8 @@ public class DigmaAgent {
     private static void startAgent(Instrumentation inst, boolean fromPremain) {
 
         Log.info("starting Digma agent " + BuildVersion.getVersion() + " built on " + BuildVersion.getDate());
+
+        installInstrumentationOnBytebuddyAgent(inst);
 
 
         try {
@@ -70,6 +73,19 @@ public class DigmaAgent {
         } catch (Throwable ex) {
             // Don't rethrow.
             Log.error("got exception while starting Digma agent", ex);
+        }
+    }
+
+    private static void installInstrumentationOnBytebuddyAgent(Instrumentation inst) {
+        try {
+            Log.debug("Installing Instrumentation on ByteBuddy Installer");
+            Class<?> byteBuddyInstaller = Class.forName("net_bytebuddy_agent_Installer".replaceAll("_", "."), false, ClassLoader.getSystemClassLoader());
+            Field instrumentationField = byteBuddyInstaller.getDeclaredField("instrumentation");
+            instrumentationField.setAccessible(true);
+            instrumentationField.set(null, inst);
+            Log.debug("Installation of Instrumentation on ByteBuddy Installer succeeded");
+        } catch (Throwable e) {
+            Log.error("Could not install instrumentation on bytebuddy Installer", e);
         }
     }
 
