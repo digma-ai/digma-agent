@@ -26,7 +26,7 @@ public class DigmaAgent {
     @SuppressWarnings("unused")
     private static void startAgent(Instrumentation inst, boolean fromPremain) {
 
-        Log.info("starting Digma agent " + BuildVersion.getVersion() + " built on " + BuildVersion.getDate() + ", os=" + OS_NAME + ", java version=" + JAVA_VERSION);
+        Log.info("starting Digma agent " + BuildVersion.getVersion() + " built on " + BuildVersion.getDate() + ", os: " + OS_NAME + ", java version: " + JAVA_VERSION);
 
 
         try {
@@ -86,7 +86,7 @@ public class DigmaAgent {
         if (!OS_NAME.toLowerCase().startsWith("mac")) {
             return;
         }
-        if(!JAVA_VERSION.contains("17")){
+        if(!JAVA_VERSION.startsWith("17")){
             return;
         }
 
