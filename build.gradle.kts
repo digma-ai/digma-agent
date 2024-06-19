@@ -25,7 +25,7 @@ val otelApiJar: Configuration by configurations.creating {
 
 dependencies {
 
-    implementation("net.bytebuddy:byte-buddy:1.14.14")
+    implementation("net.bytebuddy:byte-buddy:1.14.17")
 
     //need that for some useful byte buddy matchers
     implementation("io.opentelemetry.javaagent:opentelemetry-javaagent-extension-api:2.2.0-alpha") {
