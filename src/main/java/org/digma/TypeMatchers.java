@@ -3,10 +3,12 @@ package org.digma;
 import net.bytebuddy.description.NamedElement;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
+import org.digma.configuration.Configuration;
 
 import static io.opentelemetry.javaagent.extension.matcher.AgentElementMatchers.extendsClass;
 import static io.opentelemetry.javaagent.extension.matcher.AgentElementMatchers.implementsInterface;
 import static net.bytebuddy.matcher.ElementMatchers.*;
+import static org.digma.Matchers.getNamedElementJunction;
 
 public class TypeMatchers {
 
@@ -18,15 +20,12 @@ public class TypeMatchers {
         ElementMatcher.Junction<? super TypeDescription> packageMatcher = none();
 
         for (String packageName : configuration.getIncludePackages()) {
-            packageMatcher = packageMatcher.or(nameStartsWith(packageName + "."));
+            packageMatcher = packageMatcher.or(nameStartsWith(packageName + ".")).or(named(packageName));
         }
 
         ElementMatcher.Junction<NamedElement> excludeNamesMatcher = none();
-        for (String excludeClass : configuration.getExcludeClasses()) {
-            if (excludeClass.startsWith("*")) {
-                excludeClass = excludeClass.substring(1);
-            }
-            excludeNamesMatcher = excludeNamesMatcher.or(nameEndsWith(excludeClass));
+        for (String name : configuration.getExcludeNames()) {
+            excludeNamesMatcher = getNamedElementJunction(excludeNamesMatcher, name);
         }
 
         return digmaTypeMatcher(packageMatcher, excludeNamesMatcher);

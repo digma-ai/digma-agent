@@ -1,5 +1,7 @@
 package org.digma;
 
+import org.digma.configuration.Configuration;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

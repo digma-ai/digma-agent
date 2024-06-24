@@ -1,13 +1,14 @@
 package org.digma;
 
 import net.bytebuddy.ByteBuddy;
+import org.digma.configuration.Configuration;
 import org.digma.instrumentation.digma.agent.BuildVersion;
 
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Field;
 
-import static org.digma.Configuration.JAVA_VERSION;
-import static org.digma.Configuration.OS_NAME;
+import static org.digma.configuration.Configuration.JAVA_VERSION;
+import static org.digma.configuration.Configuration.OS_NAME;
 import static org.digma.OtelClassNames.WITH_SPAN_CLASS_NAME;
 
 public class DigmaAgent {
@@ -63,8 +64,7 @@ public class DigmaAgent {
 
             Log.debug("Digma agent started with configuration: includePackages="
                     + configuration.getIncludePackages()
-                    + ",excludeClasses=" + configuration.getExcludeClasses()
-                    + ",excludeMethods=" + configuration.getExcludeMethods());
+                    + ",excludeNames=" + configuration.getExcludeNames());
 
 
             //if we fail to load bytebuddy nothing will work

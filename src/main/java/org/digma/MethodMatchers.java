@@ -1,14 +1,17 @@
 package org.digma;
 
+import net.bytebuddy.description.NamedElement;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.BooleanMatcher;
 import net.bytebuddy.matcher.ElementMatcher;
+import org.digma.configuration.Configuration;
 
 import java.util.Objects;
 
 import static io.opentelemetry.javaagent.extension.matcher.AgentElementMatchers.hasSuperMethod;
 import static net.bytebuddy.matcher.ElementMatchers.*;
+import static org.digma.Matchers.getNamedElementJunction;
 import static org.digma.OtelClassNames.SPAN_ATTRIBUTE_CLASS_NAME;
 import static org.digma.OtelClassNames.WITH_SPAN_CLASS_NAME;
 
@@ -19,24 +22,32 @@ public class MethodMatchers {
 
     public static ElementMatcher<? super MethodDescription> create(TypeDescription typeDescription, Configuration configuration) {
 
-        ElementMatcher.Junction<? super MethodDescription> methodsExclude = none();
+        ElementMatcher.Junction<NamedElement> excludeNamesMatcher = none();
 
-        for (String excludeMethod : configuration.getExcludeMethods()) {
-            if (excludeMethod.startsWith("*")) {
-                excludeMethod = excludeMethod.substring(1);
-                methodsExclude = methodsExclude.or(nameEndsWith(excludeMethod));
-            } else if (excludeMethod.contains(".")) {
-                String className = excludeMethod.substring(0, excludeMethod.lastIndexOf("."));
-                String methodName = excludeMethod.substring(excludeMethod.lastIndexOf(".") + 1);
-                methodsExclude = methodsExclude.or(
-                        named(methodName).and(BooleanMatcher.of(Objects.equals(typeDescription.getSimpleName(), className)))
-                );
+        for (String name : configuration.getExcludeNames()) {
+            if (name.contains("#")) {
+                String className = name.substring(0, name.lastIndexOf("#"));
+                String methodName = name.substring(name.lastIndexOf("#") + 1);
+                if(methodName.endsWith("*") && methodName.length() > 1) {
+                    methodName = methodName.replace("*", "");
+                    if (!methodName.isEmpty()) {
+                        excludeNamesMatcher = excludeNamesMatcher.or(
+                                nameStartsWithIgnoreCase(methodName).and(BooleanMatcher.of(Objects.equals(typeDescription.getCanonicalName(), className))));
+                    }
+                }else{
+                    excludeNamesMatcher = excludeNamesMatcher.or(
+                            named(methodName).and(BooleanMatcher.of(Objects.equals(typeDescription.getCanonicalName(), className))));
+                }
+
+            } else {
+                excludeNamesMatcher = getNamedElementJunction(excludeNamesMatcher, name);
             }
         }
 
+
         return isMethod()
                 .and(isDeclaredBy(typeDescription))
-                .and(not(methodsExclude))
+                .and(not(excludeNamesMatcher))
 //                .and(not(namedIgnoreCase("get"))) //todo: maybe add as default exclude filter
                 .and(not(methodsFilterByAnnotation()))
                 .and(not(isSynthetic()))
@@ -54,6 +65,8 @@ public class MethodMatchers {
                 .and(not(returns(named("kotlinx.coroutines.flow.Flow"))))
                 .and(not(nameContains("$")));
     }
+
+
 
 
     private static ElementMatcher<? super MethodDescription> methodsFilterByAnnotation() {
