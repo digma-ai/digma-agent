@@ -3,6 +3,7 @@ package org.digma;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.asm.MemberAttributeExtension;
 import net.bytebuddy.description.annotation.AnnotationDescription;
+import org.digma.configuration.Configuration;
 import org.digma.instrumentation.ExtendedObservability;
 
 import java.lang.annotation.Annotation;
