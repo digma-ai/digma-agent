@@ -50,6 +50,7 @@ public class MethodMatchers {
                 .and(not(excludeNamesMatcher))
 //                .and(not(namedIgnoreCase("get"))) //todo: maybe add as default exclude filter
                 .and(not(methodsFilterByAnnotation()))
+                .and(not(isConstructor()))
                 .and(not(isSynthetic()))
                 .and(not(isBridge()))
                 .and(not(isMain()))
