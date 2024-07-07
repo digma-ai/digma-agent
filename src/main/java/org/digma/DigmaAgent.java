@@ -73,6 +73,8 @@ public class DigmaAgent {
 
             WithSpanTransformer.install(inst);
 
+            WithAWSDebug.install(inst);
+
         } catch (Throwable ex) {
             // Don't rethrow.
             Log.error("got exception while starting Digma agent", ex);
