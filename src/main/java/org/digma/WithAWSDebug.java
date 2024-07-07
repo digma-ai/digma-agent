@@ -59,13 +59,14 @@ public class WithAWSDebug {
             for (Object arg : allArguments) {
                 log.add("argument " + arg);
             }
+            String url = allArguments.length > 0 ? (String) allArguments[0].toString() : null;
 
             try {
                 return callable.call();
             } catch (Throwable e) {
                 exception = e;
                 e.printStackTrace();
-                log.add("got exception in Digma interceptor for method " + method.getName() + ": " + e);
+                log.add("got exception in Digma interceptor for method " + method.getName() + ": " + e +" for url "+url);
                 throw e;
             } finally {
                 log.add("exit Digma interceptor for method " + method.getName());
@@ -78,6 +79,7 @@ public class WithAWSDebug {
                     }
                     if (exception != null){
                         PrintWriter writer = new PrintWriter(new FileOutputStream(logFile, true));
+                        writer.println("exception stack trace for url " + url);
                         exception.printStackTrace(writer);
                         writer.close();
                     }
