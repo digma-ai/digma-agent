@@ -52,21 +52,23 @@ public class WithAWSDebug {
         public static Object intercept(@Origin Method method,
                                        @AllArguments Object[] allArguments,
                                        @SuperCall Callable<?> callable) throws Exception {
+
             List<String> log = new ArrayList<>();
+            String url = allArguments.length > 0 ? (String) allArguments[0].toString() : null;
             log.add("************************************");
             Throwable exception = null;
-            log.add("in Digma interceptor for method " + method.getName());
+            log.add("in Digma interceptor for method " + method.getName() + ", for url "+url);
             for (Object arg : allArguments) {
                 log.add("argument " + arg);
             }
-            String url = allArguments.length > 0 ? (String) allArguments[0].toString() : null;
+
 
             try {
                 return callable.call();
             } catch (Throwable e) {
                 exception = e;
                 e.printStackTrace();
-                log.add("got exception in Digma interceptor for method " + method.getName() + ": " + e +" for url "+url);
+                log.add("got exception in Digma interceptor for method " + method.getName() + ": " + e +", for url "+url);
                 throw e;
             } finally {
                 log.add("exit Digma interceptor for method " + method.getName());
