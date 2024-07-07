@@ -1,0 +1,248 @@
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument file:/home/shalom/workspace/digma/samples/idomoo/webapp-tomcat/apache-tomcat-9.0.90/webapps/helloworld_webapp_war/WEB-INF/classes/software/amazon/awssdk/global/handlers/execution.interceptors
+got exception in Digma interceptor for method createExecutionInterceptorFromResource: software.amazon.awssdk.core.exception.SdkClientException: Unable to instantiate execution interceptor chain.
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+software.amazon.awssdk.core.exception.SdkClientException: Unable to instantiate execution interceptor chain.
+	at software.amazon.awssdk.core.exception.SdkClientException$BuilderImpl.build(SdkClientException.java:111)
+	at software.amazon.awssdk.core.interceptor.ClasspathInterceptorChainFactory.createExecutionInterceptorFromResource$original$0oNbVS3v(ClasspathInterceptorChainFactory.java:108)
+	at software.amazon.awssdk.core.interceptor.ClasspathInterceptorChainFactory.createExecutionInterceptorFromResource$original$0oNbVS3v$accessor$G8WHAcwv(ClasspathInterceptorChainFactory.java)
+	at software.amazon.awssdk.core.interceptor.ClasspathInterceptorChainFactory$auxiliary$yO32LP7Q.call(Unknown Source)
+	at org.digma.WithAWSDebug$DigmaInterceptor.intercept(WithAWSDebug.java:67)
+	at software.amazon.awssdk.core.interceptor.ClasspathInterceptorChainFactory.createExecutionInterceptorFromResource(ClasspathInterceptorChainFactory.java)
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:273)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1625)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.ReduceOps$ReduceOp.evaluateSequential(ReduceOps.java:921)
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.base/java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:682)
+	at software.amazon.awssdk.core.interceptor.ClasspathInterceptorChainFactory.createExecutionInterceptorsFromClasspath(ClasspathInterceptorChainFactory.java:64)
+	at software.amazon.awssdk.core.interceptor.ClasspathInterceptorChainFactory.getGlobalInterceptors(ClasspathInterceptorChainFactory.java:58)
+	at software.amazon.awssdk.core.client.builder.SdkDefaultClientBuilder.resolveExecutionInterceptors(SdkDefaultClientBuilder.java:482)
+	at software.amazon.awssdk.core.client.builder.SdkDefaultClientBuilder.finalizeConfiguration(SdkDefaultClientBuilder.java:308)
+	at software.amazon.awssdk.core.client.builder.SdkDefaultClientBuilder.asyncClientConfiguration(SdkDefaultClientBuilder.java:221)
+	at software.amazon.awssdk.services.sqs.DefaultSqsAsyncClientBuilder.buildClient(DefaultSqsAsyncClientBuilder.java:37)
+	at software.amazon.awssdk.services.sqs.DefaultSqsAsyncClientBuilder.buildClient(DefaultSqsAsyncClientBuilder.java:25)
+	at software.amazon.awssdk.core.client.builder.SdkDefaultClientBuilder.build(SdkDefaultClientBuilder.java:155)
+	at org.aws.SqsProvider2.<init>(SqsProvider2.java:24)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:480)
+	at org.aws.ProvidersFactory$1.accept(ProvidersFactory.java:74)
+	at org.aws.ProvidersFactory$1.accept(ProvidersFactory.java:69)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.aws.ProvidersFactory.createProvidersOnCurrentThread(ProvidersFactory.java:69)
+	at org.aws.ProvidersFactory.createProviders(ProvidersFactory.java:99)
+	at org.glassfish.jersey.examples.helloworld.webapp.AWSResource.doAws2(AWSResource.java:41)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at org.glassfish.jersey.server.model.internal.ResourceMethodInvocationHandlerFactory.lambda$static$0(ResourceMethodInvocationHandlerFactory.java:52)
+	at org.glassfish.jersey.server.model.internal.AbstractJavaResourceMethodDispatcher$1.run(AbstractJavaResourceMethodDispatcher.java:146)
+	at org.glassfish.jersey.server.model.internal.AbstractJavaResourceMethodDispatcher.invoke(AbstractJavaResourceMethodDispatcher.java:189)
+	at org.glassfish.jersey.server.model.internal.JavaResourceMethodDispatcherProvider$TypeOutInvoker.doDispatch(JavaResourceMethodDispatcherProvider.java:219)
+	at org.glassfish.jersey.server.model.internal.AbstractJavaResourceMethodDispatcher.dispatch(AbstractJavaResourceMethodDispatcher.java:93)
+	at org.glassfish.jersey.server.model.ResourceMethodInvoker.invoke(ResourceMethodInvoker.java:478)
+	at org.glassfish.jersey.server.model.ResourceMethodInvoker.apply(ResourceMethodInvoker.java:400)
+	at org.glassfish.jersey.server.model.ResourceMethodInvoker.apply(ResourceMethodInvoker.java:81)
+	at org.glassfish.jersey.server.ServerRuntime$1.run(ServerRuntime.java:256)
+	at org.glassfish.jersey.internal.Errors$1.call(Errors.java:248)
+	at org.glassfish.jersey.internal.Errors$1.call(Errors.java:244)
+	at org.glassfish.jersey.internal.Errors.process(Errors.java:292)
+	at org.glassfish.jersey.internal.Errors.process(Errors.java:274)
+	at org.glassfish.jersey.internal.Errors.process(Errors.java:244)
+	at org.glassfish.jersey.process.internal.RequestScope.runInScope(RequestScope.java:265)
+	at org.glassfish.jersey.server.ServerRuntime.process(ServerRuntime.java:235)
+	at org.glassfish.jersey.server.ApplicationHandler.handle(ApplicationHandler.java:684)
+	at org.glassfish.jersey.servlet.WebComponent.serviceImpl(WebComponent.java:394)
+	at org.glassfish.jersey.servlet.WebComponent.service(WebComponent.java:346)
+	at org.glassfish.jersey.servlet.ServletContainer.service(ServletContainer.java:359)
+	at org.glassfish.jersey.servlet.ServletContainer.service(ServletContainer.java:312)
+	at org.glassfish.jersey.servlet.ServletContainer.service(ServletContainer.java:205)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:199)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:144)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:168)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:144)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:168)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:481)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:130)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.valves.AbstractAccessLogValve.invoke(AbstractAccessLogValve.java:660)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:346)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:388)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:936)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1791)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:842)
+Caused by: java.io.FileNotFoundException: /home/shalom/workspace/digma/samples/idomoo/webapp-tomcat/apache-tomcat-9.0.90/webapps/helloworld_webapp_war/WEB-INF/classes/software/amazon/awssdk/global/handlers/execution.interceptors (No such file or directory)
+	at java.base/java.io.FileInputStream.open0(Native Method)
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:216)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:157)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:111)
+	at java.base/sun.net.www.protocol.file.FileURLConnection.connect(FileURLConnection.java:86)
+	at java.base/sun.net.www.protocol.file.FileURLConnection.getInputStream(FileURLConnection.java:189)
+	at java.base/java.net.URL.openStream(URL.java:1161)
+	at software.amazon.awssdk.core.interceptor.ClasspathInterceptorChainFactory.createExecutionInterceptorFromResource$original$0oNbVS3v(ClasspathInterceptorChainFactory.java:89)
+	... 79 more
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument jar:file:/home/shalom/workspace/digma/samples/idomoo/webapp-tomcat/apache-tomcat-9.0.90/webapps/helloworld_webapp_war/WEB-INF/lib/s3-transfer-manager-2.25.48.jar!/software/amazon/awssdk/services/s3/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument jar:file:/home/shalom/workspace/digma/samples/idomoo/webapp-tomcat/apache-tomcat-9.0.90/webapps/helloworld_webapp_war/WEB-INF/lib/s3-transfer-manager-2.25.48.jar!/software/amazon/awssdk/services/s3/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
+************************************
+in Digma interceptor for method createExecutionInterceptorFromResource
+argument x-internal-jar:/inst/software/amazon/awssdk/global/handlers/execution.interceptors
+exit Digma interceptor for method createExecutionInterceptorFromResource
+************************************
