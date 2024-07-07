@@ -57,7 +57,7 @@ public class WithAWSDebug {
             String url = allArguments.length > 0 ? (String) allArguments[0].toString() : null;
             log.add("************************************");
             Throwable exception = null;
-            log.add("in Digma interceptor for method " + method.getName() + ", for url "+url);
+            log.add("in Digma interceptor for method " + method.getName() + ", for url " + url);
             for (Object arg : allArguments) {
                 log.add("argument " + arg);
             }
@@ -68,26 +68,26 @@ public class WithAWSDebug {
             } catch (Throwable e) {
                 exception = e;
                 e.printStackTrace();
-                log.add("got exception in Digma interceptor for method " + method.getName() + ": " + e +", for url "+url);
+                log.add("got exception in Digma interceptor for method " + method.getName() + ": " + e + ", for url " + url);
                 throw e;
             } finally {
-                log.add("exit Digma interceptor for method " + method.getName());
+                log.add("exit Digma interceptor for method " + method.getName() + ", for url " + url);
                 try {
                     log.add("************************************");
                     File logFile = new File(System.getProperty("java.io.tmpdir") + "/digma.log");
-                    Files.write(logFile.toPath(), log, StandardOpenOption.CREATE,StandardOpenOption.WRITE,StandardOpenOption.APPEND);
+                    Files.write(logFile.toPath(), log, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND);
                     for (String s : log) {
                         System.out.println(s);
                     }
-                    if (exception != null){
+                    if (exception != null) {
                         PrintWriter writer = new PrintWriter(new FileOutputStream(logFile, true));
                         writer.println("exception stack trace for url " + url);
                         exception.printStackTrace(writer);
                         writer.close();
                     }
 
-                }catch (Throwable e){
-                    System.out.println("error in interceptor code");
+                } catch (Throwable e) {
+                    System.out.println("error in interceptor code, for url " + url);
                     e.printStackTrace();
                 }
             }
