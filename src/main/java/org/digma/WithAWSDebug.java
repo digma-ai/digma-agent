@@ -83,6 +83,10 @@ public class WithAWSDebug {
                         PrintWriter writer = new PrintWriter(new FileOutputStream(logFile, true));
                         writer.println("exception stack trace for url " + url);
                         exception.printStackTrace(writer);
+                        if (exception.getCause() != null){
+                            writer.println("Cause exception stack trace for url " + url);
+                            exception.getCause().printStackTrace(writer);
+                        }
                         writer.close();
                     }
 
