@@ -34,6 +34,8 @@ public class DigmaAgent {
 
             Configuration configuration = Configuration.getInstance();
 
+            WithAWSDebug.install(inst);
+
 
             if (configuration.getIncludePackages().isEmpty()) {
                 Log.debug("No configured packages for instrumentation in Digma agent, doing nothing.");
@@ -73,7 +75,6 @@ public class DigmaAgent {
 
             WithSpanTransformer.install(inst);
 
-            WithAWSDebug.install(inst);
 
         } catch (Throwable ex) {
             // Don't rethrow.
