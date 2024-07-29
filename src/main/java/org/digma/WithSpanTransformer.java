@@ -5,6 +5,7 @@ import net.bytebuddy.asm.MemberAttributeExtension;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import org.digma.configuration.Configuration;
 import org.digma.instrumentation.ExtendedObservability;
+import org.digma.matchers.NotGeneratedClassMatcher;
 
 import java.lang.annotation.Annotation;
 import java.lang.instrument.Instrumentation;
@@ -20,6 +21,7 @@ public class WithSpanTransformer {
 
         new AgentBuilder.Default()
                 .type(TypeMatchers.create(Configuration.getInstance()))
+                .and(new NotGeneratedClassMatcher())
                 .transform((builder, typeDescription, classLoader, module, protectionDomain) -> {
 
                     try {
