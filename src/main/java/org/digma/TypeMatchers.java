@@ -46,7 +46,15 @@ public class TypeMatchers {
                 .and(not(hibernate6Types()))
                 .and(not(hibernate4Types()))
                 .and(not(isKotlinDataClass()))
+                .and(not(isSpringGeneratedClass()))
                 .and(not(nameContains("$")));
+    }
+
+
+    private static ElementMatcher<? super TypeDescription> isSpringGeneratedClass() {
+        return implementsInterface(namedOneOf(
+                "org.springframework.data.mapping.PersistentPropertyAccessor",
+                "org.springframework.data.mapping.model.ClassGeneratingEntityInstantiator$ObjectInstantiator"));
     }
 
 
