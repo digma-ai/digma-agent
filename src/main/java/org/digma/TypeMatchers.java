@@ -51,6 +51,10 @@ public class TypeMatchers {
     }
 
 
+    //todo: research and add more spring interfaces implemented by generated classes.
+    // see for example in spring data:
+    // org.springframework.data.mapping.model.ClassGeneratingEntityInstantiator
+    // org.springframework.data.mapping.model.ClassGeneratingPropertyAccessorFactory
     private static ElementMatcher<? super TypeDescription> isSpringGeneratedClass() {
         return implementsInterface(namedOneOf(
                 "org.springframework.data.mapping.PersistentPropertyAccessor",
