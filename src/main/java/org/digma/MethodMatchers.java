@@ -11,6 +11,7 @@ import java.util.Objects;
 
 import static io.opentelemetry.javaagent.extension.matcher.AgentElementMatchers.hasSuperMethod;
 import static net.bytebuddy.matcher.ElementMatchers.*;
+import static net.bytebuddy.matcher.ElementMatchers.isAnnotatedWith;
 import static org.digma.Matchers.getNamedElementJunction;
 import static org.digma.OtelClassNames.SPAN_ATTRIBUTE_CLASS_NAME;
 import static org.digma.OtelClassNames.WITH_SPAN_CLASS_NAME;
@@ -62,11 +63,14 @@ public class MethodMatchers {
                 .and(not(isSynthetic()))
                 .and(not(isBridge()))
                 .and(not(methodsFilterByAnnotation()))
+                .and(not(springScheduled()))
                 .and(not(returns(named("kotlinx.coroutines.flow.Flow"))))
                 .and(not(nameContains("$")));
     }
 
-
+    private static ElementMatcher<? super MethodDescription> springScheduled() {
+        return isAnnotatedWith(named("org.springframework.scheduling.annotation.Scheduled"));
+    }
 
 
     private static ElementMatcher<? super MethodDescription> methodsFilterByAnnotation() {
