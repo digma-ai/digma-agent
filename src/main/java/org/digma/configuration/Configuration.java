@@ -65,6 +65,10 @@ public class Configuration {
     public static final String DEBUG_ENV_VAR = "DIGMA_AGENT_DEBUG";
 
 
+    public static final String JDBC_PS_PARAMS_ENABLED_SYSTEM_PROPERTY = "org.digma.otel.instrumentation.jdbc.ps.params.enabled";
+    public static final String JDBC_PS_PARAMS_ENABLED_ENABLED_ENV_VAR = "ORG_DIGMA_OTEL_INSTRUMENTATION_JDBC_PS_PARAMS_ENABLED";
+
+
     private final List<String> includePackages;
     private final List<String> excludeNames;
 
@@ -121,6 +125,21 @@ public class Configuration {
 
     public boolean isDebug() {
         return getBoolean(DEBUG_SYSTEM_PROPERTY, DEBUG_ENV_VAR);
+    }
+
+    public boolean isExtendedObservabilityEnabled(){
+        return !getIncludePackages().isEmpty();
+    }
+
+
+    private boolean isExposePreparedStatementsParametersExist() {
+        return configurationReader.getEnvOrSystemProperty(JDBC_PS_PARAMS_ENABLED_SYSTEM_PROPERTY) != null ||
+                configurationReader.getEnvOrSystemProperty(JDBC_PS_PARAMS_ENABLED_ENABLED_ENV_VAR) != null;
+    }
+
+    public boolean isExposePreparedStatementsParametersEnabled() {
+        return isExposePreparedStatementsParametersExist() &&
+                getBoolean(JDBC_PS_PARAMS_ENABLED_SYSTEM_PROPERTY, JDBC_PS_PARAMS_ENABLED_ENABLED_ENV_VAR);
     }
 
 

@@ -32,6 +32,11 @@ dependencies {
         isTransitive = false
     }
 
+    //datasource-proxy is packaged in digma-agent and in otel extension, fortunately
+    // both are loaded by the system class loader so there is no duplicate classed
+    //the shadowing must be the same
+    implementation("net.ttddyy:datasource-proxy:1.10")
+
     //we don't need those annotations at runtime, it's only for development in Idea
     compileOnly("org.jetbrains:annotations:21.0.0")
 
@@ -103,6 +108,8 @@ tasks {
         //I started a discussion in GitHub otel repo and waiting for suggestions if these are real errors or can be ignored.
         //https://github.com/open-telemetry/opentelemetry-java-instrumentation/discussions/11336
         relocate("net.bytebuddy", "org.digma.net.bytebuddy")
+
+        relocate("net.ttddyy.dsproxy", "org.digma.net.ttddyy.dsproxy")
 
     }
 
