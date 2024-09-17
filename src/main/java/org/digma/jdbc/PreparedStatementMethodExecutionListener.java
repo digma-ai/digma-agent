@@ -5,6 +5,7 @@ import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 import net.ttddyy.dsproxy.proxy.StatementMethodNames;
 import org.digma.Log;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -80,6 +81,9 @@ public class PreparedStatementMethodExecutionListener implements MethodExecution
     }
 
 
+    //if this method can't build the query or there are no parameters and no batches then it should return null,
+    // when null is returned our otel extension will not override the original db.statement span attribute.
+    @Nullable
     public String buildQueryWithParameters(String methodName) {
         if (StatementMethodNames.BATCH_EXEC_METHODS.contains(methodName) && !batches.isEmpty()) {
             return buildBatchQueriesWithParameters();
@@ -91,30 +95,52 @@ public class PreparedStatementMethodExecutionListener implements MethodExecution
     }
 
 
+    //if this method can't build the query with parameters or there are no batches then return null.
+    @Nullable
     private String buildBatchQueriesWithParameters() {
+
+        if (batches.isEmpty()) {
+            return null;
+        }
+
         StringBuilder sb = new StringBuilder();
         int index = 0;
         for (MyQueryInfo batch : batches) {
             if (!batch.getParametersList().isEmpty()) {
-                sb.append("[");
+
                 String queryWithParams = buildQueryWithParameters(batch.getQuery(), batch.getParametersList());
-                sb.append(queryWithParams);
-                sb.append("]");
-                if (index + 1 < batches.size()) {
-                    sb.append(", ");
+                if (queryWithParams != null) {
+                    sb.append("[");
+                    sb.append(queryWithParams);
+                    sb.append("]");
+                    if (index + 1 < batches.size()) {
+                        sb.append(", ");
+                    }
                 }
+
                 index++;
             }
         }
+
+        if (sb.length() == 0) {
+            return null;
+        }
+
         return sb.toString();
     }
 
 
+    //if this method can't build the query with parameters or there are no parameters then return null.
+    @Nullable
     private String buildQueryWithParameters(String query, List<ParameterSetOperation> queryParameters) {
         List<ParameterSetOperation> paramsSortedByIndex = sortParametersByIndex(queryParameters);
         long questionMarks = IntStream.range(0, query.length()).filter(i -> query.charAt(i) == '?').count();
         if (questionMarks != paramsSortedByIndex.size()) {
-            return query;
+            return null;
+        }
+
+        if (paramsSortedByIndex.isEmpty()) {
+            return null;
         }
 
         String queryWithParams = query;
@@ -140,6 +166,7 @@ public class PreparedStatementMethodExecutionListener implements MethodExecution
     }
 
 
+    @Nullable
     public String buildQueryParameters(String methodName) {
 
         if (StatementMethodNames.BATCH_EXEC_METHODS.contains(methodName) && !batches.isEmpty()) {
@@ -151,25 +178,48 @@ public class PreparedStatementMethodExecutionListener implements MethodExecution
         }
     }
 
+    @Nullable
     private String buildBatchesQueriesParameters() {
+
+        if (batches.isEmpty()) {
+            return null;
+        }
+
         StringBuilder sb = new StringBuilder();
         int index = 0;
         for (MyQueryInfo batch : batches) {
-            sb.append("[");
+
             String queryParams = buildQueryParameters(batch.getParametersList());
-            sb.append(queryParams);
-            sb.append("]");
-            if (index + 1 < batches.size()) {
-                sb.append(", ");
+            if (queryParams != null && !queryParams.isEmpty()) {
+                sb.append("[");
+                sb.append(queryParams);
+                sb.append("]");
+                if (index + 1 < batches.size()) {
+                    sb.append(", ");
+                }
             }
+
             index++;
         }
+
+        if (sb.length() == 0) {
+            return null;
+        }
+
         return sb.toString();
     }
 
 
+    @Nullable
     private String buildQueryParameters(List<ParameterSetOperation> queryParameters) {
+
         List<ParameterSetOperation> paramsSortedByIndex = sortParametersByIndex(queryParameters);
+
+        if (paramsSortedByIndex.isEmpty()) {
+            return null;
+        }
+
+
         StringBuilder sb = new StringBuilder();
         int index = 0;
         for (ParameterSetOperation param : paramsSortedByIndex) {
