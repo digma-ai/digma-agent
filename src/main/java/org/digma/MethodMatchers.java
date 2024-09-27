@@ -57,6 +57,7 @@ public class MethodMatchers {
                 .and(not(isHashCode()))
                 .and(not(isEquals()))
                 .and(not(isClone()))
+                .and(not(isAbstract()))
                 .and(not(isToString()))
                 .and(not(isTypeInitializer()))
                 .and(not(isNative()))
