@@ -28,7 +28,7 @@ dependencies {
     implementation("net.bytebuddy:byte-buddy:1.14.17")
 
     //need that for some useful byte buddy matchers
-    implementation("io.opentelemetry.javaagent:opentelemetry-javaagent-extension-api:2.2.0-alpha") {
+    implementation(libs.oteExtensionApi) {
         isTransitive = false
     }
 
@@ -47,7 +47,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
 
 
-    otelApiJar("io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations:2.1.0")
+    otelApiJar(libs.oteInstrumentationAnnotations)
 }
 
 tasks {
