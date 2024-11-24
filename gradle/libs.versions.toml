@@ -7,6 +7,6 @@ opentelemetryJavaagentAlpha = "2.10.0-alpha"
 
 
 [libraries]
-oteExtensionApi = { group = "io.opentelemetry.javaagent", name = "opentelemetry-javaagent-extension-api", version.ref = "opentelemetryJavaagentAlpha" }
-oteInstrumentationAnnotations = { group = "io.opentelemetry.instrumentation", name = "opentelemetry-instrumentation-annotations", version.ref = "opentelemetryJavaagent" }
+otelExtensionApi = { group = "io.opentelemetry.javaagent", name = "opentelemetry-javaagent-extension-api", version.ref = "opentelemetryJavaagentAlpha" }
+otelInstrumentationAnnotations = { group = "io.opentelemetry.instrumentation", name = "opentelemetry-instrumentation-annotations", version.ref = "opentelemetryJavaagent" }
 
