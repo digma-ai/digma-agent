@@ -42,6 +42,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release upload ${{ github.event.release.tag_name }} ./build/libs/digma-agent*.jar
 
+      # we pin v1.0.27 as latest tag. this is a workaround .
+      # in November 2024 we changed the version of the agent that the plugin downloads from latest to a specific version.
+      # for that we needed to pin v1.0.27 as latest so that older plugin version will still use this release.
+      - name: pin v1.0.27 as latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release edit v1.0.27 --latest
+
+
 
   update-to-next-version:
     needs: [ release ]
