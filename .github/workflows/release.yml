@@ -21,6 +21,9 @@ jobs:
 
     steps:
 
+      - name: GIT Checkout
+        uses: actions/checkout@v4
+
       # we pin v1.0.27 as 'latest' tag.
       # in github UI the release may be marked as latest. So do it as first step of the workflow so there is less time
       #  that this release is marked as latest
@@ -34,9 +37,7 @@ jobs:
         run: |
           gh release edit v1.0.27 --latest
       
-
-      - name: GIT Checkout
-        uses: actions/checkout@v4
+      
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
