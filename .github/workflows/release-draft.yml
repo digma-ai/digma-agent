@@ -39,4 +39,5 @@ jobs:
         run: |
           gh release create v${{ steps.exportversion.outputs.version }} \
             --draft \
+            --latest=false \
             --title "v${{ steps.exportversion.outputs.version }}"
