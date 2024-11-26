@@ -1,14 +1,13 @@
 package org.digma;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
 public class OtelApiInjector {
@@ -24,7 +23,7 @@ public class OtelApiInjector {
     }
 
     private static List<JarFile> createOtelJarFiles() throws IOException {
-        List<File> files = createFilesFromPaths();
+        List<File> files = createOtelJarFilesFromPaths();
         List<JarFile> jarFiles = new ArrayList<>();
         for (File file : files) {
             JarFile jarFile = new JarFile(file, false, ZipFile.OPEN_READ);
@@ -35,11 +34,11 @@ public class OtelApiInjector {
     }
 
 
-    private static List<File> createFilesFromPaths() throws IOException {
-        List<String> resourcePaths = getResourceFolderFiles();
+    private static List<File> createOtelJarFilesFromPaths() throws IOException {
+        List<String> resourcePaths = getOtelJarsFiles();
         List<File> files = new ArrayList<>();
         for (String path : resourcePaths) {
-            Log.debug("creating file from resource path:" + path);
+            Log.debug("creating file from resource path " + path);
             InputStream resourceStream = OtelApiInjector.class.getResourceAsStream(path);
             if (resourceStream == null) {
                 throw new FileNotFoundException("could not find resource " + path);
@@ -48,19 +47,34 @@ public class OtelApiInjector {
             out.deleteOnExit();
             Files.copy(resourceStream, out.toPath(), StandardCopyOption.REPLACE_EXISTING);
             files.add(out);
+            Log.debug("file from resource path " + path + " created " + out);
         }
 
         return files;
     }
 
 
-    private static List<String> getResourceFolderFiles() {
-        //todo: improve , find the way to list files in resource folder inside a jar.
-        // if we change the versions in gradle this must be changed too
+    private static List<String> getOtelJarsFiles() throws IOException {
+
+        //the file otel-jars-list.txt is generated at build time and contains the list of file that are
+        // packaged as the otel jars.
+        // it is done this way because it s tricky to just list files in a resource folder in a jar and may not always work.
+
+        String otelJarsList = OTEL_JARS_RESOURCE_FOLDER + "/otel-jars-list.txt";
         List<String> files = new ArrayList<>();
-        files.add(OTEL_JARS_RESOURCE_FOLDER + "/opentelemetry-api-1.44.1.myjar");
-        files.add(OTEL_JARS_RESOURCE_FOLDER + "/opentelemetry-context-1.44.1.myjar");
-        files.add(OTEL_JARS_RESOURCE_FOLDER + "/opentelemetry-instrumentation-annotations-2.10.0.myjar");
+
+        try (InputStream resourceStream = OtelApiInjector.class.getResourceAsStream(otelJarsList)) {
+            if (resourceStream == null) {
+                throw new FileNotFoundException("could not find otel-jars-list.txt");
+            }
+            Reader reader = new InputStreamReader(resourceStream, StandardCharsets.UTF_8);
+            BufferedReader bufferedReader = new BufferedReader(reader);
+            List<String> lines = bufferedReader.lines().collect(Collectors.toList());
+            lines.forEach(line -> {
+                files.add(OTEL_JARS_RESOURCE_FOLDER + "/" + line);
+            });
+        }
+
         return files;
     }
 
