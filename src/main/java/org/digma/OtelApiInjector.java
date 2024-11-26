@@ -58,9 +58,9 @@ public class OtelApiInjector {
         //todo: improve , find the way to list files in resource folder inside a jar.
         // if we change the versions in gradle this must be changed too
         List<String> files = new ArrayList<>();
-        files.add(OTEL_JARS_RESOURCE_FOLDER + "/opentelemetry-api-1.35.0.myjar");
-        files.add(OTEL_JARS_RESOURCE_FOLDER + "/opentelemetry-context-1.35.0.myjar");
-        files.add(OTEL_JARS_RESOURCE_FOLDER + "/opentelemetry-instrumentation-annotations-2.1.0.myjar");
+        files.add(OTEL_JARS_RESOURCE_FOLDER + "/opentelemetry-api-1.44.1.myjar");
+        files.add(OTEL_JARS_RESOURCE_FOLDER + "/opentelemetry-context-1.44.1.myjar");
+        files.add(OTEL_JARS_RESOURCE_FOLDER + "/opentelemetry-instrumentation-annotations-2.10.0.myjar");
         return files;
     }
 
