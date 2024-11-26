@@ -12,6 +12,8 @@ plugins {
 group = "org.digma.instrumentation"
 version = common.semanticversion.getSemanticVersion(project)
 
+val otelJarsFolder = "otelJars"
+
 repositories {
     mavenCentral()
 }
@@ -118,21 +120,41 @@ tasks {
         finalizedBy("shadowJar")
     }
 
-    val packageOtelJar by registering(Copy::class) {
-        val src = otelApiJar.files
-        val dest = File(project.sourceSets.main.get().output.resourcesDir, "otelJars")
-        from(src)
-        into(dest)
-        //bug in shadowJar that it ignores .jar files in the resource folder, the suggestion in the issue was to rename it
-        // to something other than jar. the agent code will rename to .jar when it uses it.
-        //see https://github.com/johnrengelman/shadow/issues/276
-        rename {
-            it.replace(".jar",".myjar")
+    val packageOtelJar by registering {
+
+        val output = layout.buildDirectory.dir(otelJarsFolder)
+        val outputDirectory = output.get().dir(otelJarsFolder)
+
+        inputs.files(otelApiJar)
+        outputs.dir(output)
+
+        doLast {
+            outputDirectory.asFile.mkdirs()
+            copy {
+                from(inputs.files)
+                into(outputDirectory)
+                //bug in shadowJar that it ignores .jar files in the resource folder, the suggestion in the issue was to rename it
+                // to something other than jar. the agent code will rename to .jar when it uses it.
+                //see https://github.com/johnrengelman/shadow/issues/276
+                rename {
+                    it.replace(".jar", ".myjar")
+                }
+            }
+        }
+
+        //generate a file with the list of files to use at runtime.
+        //the list of files is used by org.digma.OtelApiInjector.getOtelJarsFiles.
+        //we use this way because it is tricky in java to list files in a jar resource folder and may not always work.
+        doLast{
+            val outputFile = outputDirectory.file("otel-jars-list.txt")
+            outputFile.asFile.bufferedWriter().use { writer ->
+                for (file in inputs.files) writer.appendLine(file.name.replace(".jar",".myjar"))
+            }
         }
     }
 
-    processResources{
-        dependsOn(packageOtelJar)
+    sourceSets.main{
+        resources.srcDir(packageOtelJar)
     }
 
 }
