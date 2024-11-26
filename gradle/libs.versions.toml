@@ -5,7 +5,7 @@ opentelemetryJavaagentAlpha = "2.10.0-alpha"
 
 # plugins
 
-
+## when upgrading otel version change also the file names in class OtelApiInjector
 [libraries]
 otelExtensionApi = { group = "io.opentelemetry.javaagent", name = "opentelemetry-javaagent-extension-api", version.ref = "opentelemetryJavaagentAlpha" }
 otelInstrumentationAnnotations = { group = "io.opentelemetry.instrumentation", name = "opentelemetry-instrumentation-annotations", version.ref = "opentelemetryJavaagent" }
