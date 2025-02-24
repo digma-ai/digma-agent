@@ -21,7 +21,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TypeMatchersTests extends AbstractConfigurationTest {
+public class NamespaceTypeMatchersTests extends AbstractConfigurationTest {
 
 
     /*
@@ -38,7 +38,7 @@ public class TypeMatchersTests extends AbstractConfigurationTest {
         Map<String,String> props = new HashMap<>();
         props.put(Configuration.DIGMA_AUTO_INSTRUMENT_PACKAGES_SYSTEM_PROPERTY,"com.nonexist;com.example.testpkg.testclasses.MyTestClass;com.test.package1.Package1Class");
         Configuration configuration = withProperties(props);
-        ElementMatcher<? super TypeDescription> matcher =  TypeMatchers.create(configuration);
+        ElementMatcher<? super TypeDescription> matcher =  NamespaceTypeMatchers.create(configuration);
 
         assertTrue(matcher.matches(TypeDescription.ForLoadedType.of(MyTestClass.class)));
         assertTrue(matcher.matches(TypeDescription.ForLoadedType.of(Package1Class.class)));
@@ -60,7 +60,7 @@ public class TypeMatchersTests extends AbstractConfigurationTest {
         props.put(Configuration.DIGMA_AUTO_INSTRUMENT_PACKAGES_SYSTEM_PROPERTY,"com.nonexist;com.example.testpkg;com.test.package1");
         Configuration configuration = withProperties(props);
 
-        ElementMatcher<? super TypeDescription> matcher =  TypeMatchers.create(configuration);
+        ElementMatcher<? super TypeDescription> matcher =  NamespaceTypeMatchers.create(configuration);
 
         assertTrue(matcher.matches(TypeDescription.ForLoadedType.of(MyTestClass.class)));
         assertTrue(matcher.matches(TypeDescription.ForLoadedType.of(ClassInSubPackage.class)));
@@ -81,7 +81,7 @@ public class TypeMatchersTests extends AbstractConfigurationTest {
         props.put(Configuration.DIGMA_AUTO_INSTRUMENT_PACKAGES_SYSTEM_PROPERTY,"com.nonexist;com.example.testpkg;com.test.package1.Package1Class");
         Configuration configuration = withProperties(props);
 
-        ElementMatcher<? super TypeDescription> matcher =  TypeMatchers.create(configuration);
+        ElementMatcher<? super TypeDescription> matcher =  NamespaceTypeMatchers.create(configuration);
 
         assertTrue(matcher.matches(TypeDescription.ForLoadedType.of(MyTestClass.class)));
         assertTrue(matcher.matches(TypeDescription.ForLoadedType.of(ClassInSubPackage.class)));
@@ -102,7 +102,7 @@ public class TypeMatchersTests extends AbstractConfigurationTest {
         props.put(Configuration.DIGMA_AUTO_INSTRUMENT_PACKAGES_SYSTEM_PROPERTY,"com.nonexist;com.example;com.test");
         Configuration configuration = withProperties(props);
 
-        ElementMatcher<? super TypeDescription> matcher =  TypeMatchers.create(configuration);
+        ElementMatcher<? super TypeDescription> matcher =  NamespaceTypeMatchers.create(configuration);
 
         assertTrue(matcher.matches(TypeDescription.ForLoadedType.of(MyTestClass.class)));
         assertTrue(matcher.matches(TypeDescription.ForLoadedType.of(ClassInSubPackage.class)));
@@ -124,7 +124,7 @@ public class TypeMatchersTests extends AbstractConfigurationTest {
         props.put(Configuration.DIGMA_AUTO_INSTRUMENT_PACKAGES_SYSTEM_PROPERTY,"com.nonexist;com.example;com.test");
         props.put(Configuration.DIGMA_AUTO_INSTRUMENT_PACKAGES_EXCLUDE_NAMES_SYSTEM_PROPERTY,"com.test.package2*;com.example.testpkg.testclasses.subpackage.ClassInSubPackage");
         Configuration configuration = withProperties(props);
-        ElementMatcher<? super TypeDescription> matcher =  TypeMatchers.create(configuration);
+        ElementMatcher<? super TypeDescription> matcher =  NamespaceTypeMatchers.create(configuration);
 
         assertTrue(matcher.matches(TypeDescription.ForLoadedType.of(MyTestClass.class)));
         assertTrue(matcher.matches(TypeDescription.ForLoadedType.of(OtherClassInSubPackage.class)));
@@ -145,7 +145,7 @@ public class TypeMatchersTests extends AbstractConfigurationTest {
         props.put(Configuration.DIGMA_AUTO_INSTRUMENT_PACKAGES_SYSTEM_PROPERTY,"com.nonexist;com.example;com.test");
         props.put(Configuration.DIGMA_AUTO_INSTRUMENT_PACKAGES_EXCLUDE_NAMES_SYSTEM_PROPERTY,"com.test.package*;com.example.testpkg.testclasses.subpackage.ClassInSubPackage");
         Configuration configuration = withProperties(props);
-        ElementMatcher<? super TypeDescription> matcher =  TypeMatchers.create(configuration);
+        ElementMatcher<? super TypeDescription> matcher =  NamespaceTypeMatchers.create(configuration);
 
         assertTrue(matcher.matches(TypeDescription.ForLoadedType.of(MyTestClass.class)));
         assertTrue(matcher.matches(TypeDescription.ForLoadedType.of(OtherClassInSubPackage.class)));
@@ -169,7 +169,7 @@ public class TypeMatchersTests extends AbstractConfigurationTest {
         // although it can also be a part of the package name
         props.put(Configuration.DIGMA_AUTO_INSTRUMENT_PACKAGES_EXCLUDE_NAMES_SYSTEM_PROPERTY,"com.test.package1*;*ClassInSubPackage;*.Stub*");
         Configuration configuration = withProperties(props);
-        ElementMatcher<? super TypeDescription> matcher =  TypeMatchers.create(configuration);
+        ElementMatcher<? super TypeDescription> matcher =  NamespaceTypeMatchers.create(configuration);
 
         assertTrue(matcher.matches(TypeDescription.ForLoadedType.of(MyTestClass.class)));
         assertTrue(matcher.matches(TypeDescription.ForLoadedType.of(MyStub.class)));
@@ -193,7 +193,7 @@ public class TypeMatchersTests extends AbstractConfigurationTest {
         // although it can also be a part of the package name
         props.put(Configuration.DIGMA_AUTO_INSTRUMENT_PACKAGES_EXCLUDE_NAMES_SYSTEM_PROPERTY,"*package1*;*Stub*");
         Configuration configuration = withProperties(props);
-        ElementMatcher<? super TypeDescription> matcher =  TypeMatchers.create(configuration);
+        ElementMatcher<? super TypeDescription> matcher =  NamespaceTypeMatchers.create(configuration);
 
         assertTrue(matcher.matches(TypeDescription.ForLoadedType.of(MyTestClass.class)));
         assertTrue(matcher.matches(TypeDescription.ForLoadedType.of(OtherClassInSubPackage.class)));
@@ -218,7 +218,7 @@ public class TypeMatchersTests extends AbstractConfigurationTest {
         // although it can also be a part of the package name
         props.put(Configuration.DIGMA_AUTO_INSTRUMENT_PACKAGES_EXCLUDE_NAMES_SYSTEM_PROPERTY,"*Class;*Stub");
         Configuration configuration = withProperties(props);
-        ElementMatcher<? super TypeDescription> matcher =  TypeMatchers.create(configuration);
+        ElementMatcher<? super TypeDescription> matcher =  NamespaceTypeMatchers.create(configuration);
 
         assertTrue(matcher.matches(TypeDescription.ForLoadedType.of(OtherClassInSubPackage.class)));
         assertTrue(matcher.matches(TypeDescription.ForLoadedType.of(ClassInSubPackage.class)));
@@ -242,7 +242,7 @@ public class TypeMatchersTests extends AbstractConfigurationTest {
         // although it can also be a part of the package name
         props.put(Configuration.DIGMA_AUTO_INSTRUMENT_PACKAGES_EXCLUDE_NAMES_SYSTEM_PROPERTY,"com.test.package1.Class*");
         Configuration configuration = withProperties(props);
-        ElementMatcher<? super TypeDescription> matcher =  TypeMatchers.create(configuration);
+        ElementMatcher<? super TypeDescription> matcher =  NamespaceTypeMatchers.create(configuration);
 
         assertTrue(matcher.matches(TypeDescription.ForLoadedType.of(MyTestClass.class)));
         assertTrue(matcher.matches(TypeDescription.ForLoadedType.of(ClassInSubPackage.class)));

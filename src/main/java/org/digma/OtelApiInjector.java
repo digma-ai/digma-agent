@@ -13,8 +13,22 @@ import java.util.zip.ZipFile;
 public class OtelApiInjector {
 
     private final static String OTEL_JARS_RESOURCE_FOLDER = "/otelJars";
+    private static boolean alreadyInjected = false;
 
     public static void injectOtelApiJarToSystemClassLoader() throws IOException {
+
+        Log.debug("injectOtelApiJarToSystemClassLoader called");
+
+        //this method may be called multiple times, but we need to inject only once
+        if (alreadyInjected){
+            Log.debug("not injecting otel api to system class loader because already injected");
+            return;
+        }
+
+        alreadyInjected = true;
+
+        Log.debug("injecting otel api to system class loader");
+
         List<JarFile> jarFiles = createOtelJarFiles();
         for (JarFile jarFile : jarFiles) {
             Log.debug("injecting to system class loader , jar file:" + jarFile.getName());
