@@ -16,9 +16,9 @@ import static org.digma.Matchers.getNamedElementJunction;
 import static org.digma.OtelClassNames.SPAN_ATTRIBUTE_CLASS_NAME;
 import static org.digma.OtelClassNames.WITH_SPAN_CLASS_NAME;
 
-public class MethodMatchers {
+public class NamespaceMethodMatchers {
 
-    private MethodMatchers() {
+    private NamespaceMethodMatchers() {
     }
 
     public static ElementMatcher<? super MethodDescription> create(TypeDescription typeDescription, Configuration configuration) {
@@ -48,6 +48,7 @@ public class MethodMatchers {
 
         return isMethod()
                 .and(isDeclaredBy(typeDescription))
+                .and(not(isAnnotatedWith(named(WITH_SPAN_CLASS_NAME))))
                 .and(not(excludeNamesMatcher))
                 .and(not(isSetter()))
                 .and(not(isGetter()))

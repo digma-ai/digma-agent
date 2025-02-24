@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("DuplicatedCode")
 public class Configuration {
 
     public static final String OS_NAME = System.getProperty("os.name");
@@ -48,6 +49,17 @@ public class Configuration {
     public static final String DIGMA_AUTO_INSTRUMENT_PACKAGES_EXCLUDE_NAMES_SYSTEM_PROPERTY = "digma.autoinstrument.packages.exclude.names";
     public static final String DIGMA_AUTO_INSTRUMENT_PACKAGES_EXCLUDE_NAMES_ENV_VAR = "DIGMA_AUTOINSTRUMENT_PACKAGES_EXCLUDE_NAMES";
 
+
+    /**
+     * a list of annotations names.
+     * the agent will instrument any method that is annotation with any of these annotations.
+     * for example micrometer io.micrometer.observation.annotation.Observed
+     */
+    public static final String DIGMA_AUTO_INSTRUMENT_METHODS_BY_ANNOTATION_SYSTEM_PROPERTY = "digma.autoinstrument.methods.by.annotation";
+    public static final String DIGMA_AUTO_INSTRUMENT_METHODS_BY_ANNOTATION_ENV_VAR = "DIGMA_AUTOINSTRUMENT_METHODS_BY_ANNOTATION";
+
+
+
     /**
      * argument to control injection of otel api to system class loader.
      * if it doesn't exist the agent will check if @WithSpan exists in the system class loader, if not, it will inject otel api to the system class loader.
@@ -71,6 +83,8 @@ public class Configuration {
 
     private final List<String> includePackages;
     private final List<String> excludeNames;
+    private final List<String> methodsAnnotations;
+
 
     private static final Configuration INSTANCE = new Configuration(new ConfigurationReader());
     private final ConfigurationReader configurationReader;
@@ -94,6 +108,7 @@ public class Configuration {
         this.configurationReader = configurationReader;
         includePackages = loadExtendedObservabilityPackages();
         excludeNames = loadExcludeNames();
+        methodsAnnotations = loadMethodsAnnotations();
     }
 
 
@@ -127,8 +142,12 @@ public class Configuration {
         return getBoolean(DEBUG_SYSTEM_PROPERTY, DEBUG_ENV_VAR);
     }
 
-    public boolean isExtendedObservabilityEnabled(){
+    public boolean isExtendedObservabilityByNamespaceEnabled(){
         return !getIncludePackages().isEmpty();
+    }
+
+    public boolean isExtendedObservabilityByAnnotationEnabled(){
+        return !getMethodsAnnotations().isEmpty();
     }
 
 
@@ -149,6 +168,11 @@ public class Configuration {
     }
 
     @NotNull
+    public List<String> getMethodsAnnotations() {
+        return methodsAnnotations;
+    }
+
+    @NotNull
     public List<String> getExcludeNames() {
         return excludeNames;
     }
@@ -163,6 +187,20 @@ public class Configuration {
         }
         if (packageNames != null) {
             return Arrays.asList(packageNames.split(";"));
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    @NotNull
+    private List<String> loadMethodsAnnotations() {
+
+        String annotations = configurationReader.getEnvOrSystemProperty(DIGMA_AUTO_INSTRUMENT_METHODS_BY_ANNOTATION_SYSTEM_PROPERTY);
+        if (annotations == null) {
+            annotations = configurationReader.getEnvOrSystemProperty(DIGMA_AUTO_INSTRUMENT_METHODS_BY_ANNOTATION_ENV_VAR);
+        }
+        if (annotations != null) {
+            return Arrays.asList(annotations.split(";"));
         } else {
             return Collections.emptyList();
         }

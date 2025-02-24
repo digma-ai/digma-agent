@@ -47,11 +47,20 @@ public class DigmaAgent {
             }
 
 
-            if (configuration.isExtendedObservabilityEnabled()) {
-                WithSpanTransformer.install(inst);
+            if (configuration.isExtendedObservabilityByNamespaceEnabled()) {
+                Log.debug("Extended observability by namespace is configured, installing WithSpan transformer.");
+                new ExtendedObservabilityByNamespace().install(inst);
                 agentActivated = true;
             } else {
-                Log.debug("Extended observability is not configured, not installing WithSpan transformer.");
+                Log.debug("Extended observability by namespace is not configured, not installing WithSpan transformer.");
+            }
+
+            if (configuration.isExtendedObservabilityByAnnotationEnabled()) {
+                Log.debug("Extended observability by annotation is configured, installing WithSpan transformer.");
+                new ExtendedObservabilityByAnnotation().install(inst);
+                agentActivated = true;
+            } else {
+                Log.debug("Extended observability by annotation is not configured, not installing WithSpan transformer.");
             }
 
 

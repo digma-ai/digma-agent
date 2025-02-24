@@ -2,8 +2,11 @@ package org.digma;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.builder.AgentBuilder;
-import net.bytebuddy.asm.MemberAttributeExtension;
 import net.bytebuddy.description.annotation.AnnotationDescription;
+import net.bytebuddy.description.method.MethodDescription;
+import net.bytebuddy.description.type.TypeDescription;
+import net.bytebuddy.dynamic.DynamicType;
+import net.bytebuddy.matcher.ElementMatcher;
 import org.digma.configuration.Configuration;
 import org.digma.instrumentation.ExtendedObservability;
 import org.digma.matchers.NotGeneratedClassMatcher;
@@ -13,15 +16,25 @@ import java.lang.instrument.Instrumentation;
 
 import static org.digma.OtelClassNames.WITH_SPAN_CLASS_NAME;
 
-public class WithSpanTransformer {
+public abstract class WithSpanTransformer {
 
 
-    public static void install(Instrumentation inst) {
+    protected abstract ElementMatcher<? super TypeDescription> getTypeMatcher();
+
+    protected abstract ElementMatcher<? super MethodDescription> getMethodMatcher(TypeDescription typeDescription);
+
+    //the different implementation may need to annotate different annotations.
+    //for example in ExtendedObservabilityByAnnotation we don't need the org.digma.instrumentation.ExtendedObservability
+    protected abstract DynamicType.Builder<?> annotate(DynamicType.Builder<?> builder, TypeDescription typeDescription, ClassLoader classLoader) throws Exception;
+
+
+    public void install(Instrumentation inst) {
 
         Log.debug("Extended observability is enabled, installing WithSpan transformer.");
         Log.debug("Digma agent started with extended observability configuration: " +
                 "includePackages=" + Configuration.getInstance().getIncludePackages()
-                + ",excludeNames=" + Configuration.getInstance().getExcludeNames());
+                + ",excludeNames=" + Configuration.getInstance().getExcludeNames()
+                + ",methodsAnnotations=" + Configuration.getInstance().getMethodsAnnotations());
 
 
         try {
@@ -56,7 +69,7 @@ public class WithSpanTransformer {
     }
 
 
-    private static void makeSureWithSpanClassIsAvailable() {
+    private void makeSureWithSpanClassIsAvailable() {
 
         //if configuration is true inject and return
         if (Configuration.getInstance().shouldInjectOtelApiToSystemClassLoader()) {
@@ -86,7 +99,7 @@ public class WithSpanTransformer {
     }
 
 
-    private static void injectOtelApiToSystemClassLoader() {
+    private void injectOtelApiToSystemClassLoader() {
         if (Configuration.getInstance().shouldInjectOtelApiToSystemClassLoaderExist() &&
                 !Configuration.getInstance().shouldInjectOtelApiToSystemClassLoader()) {
             Log.debug("injectOtelApiToSystemClassLoader was called but configuration is false, not injecting");
@@ -107,28 +120,21 @@ public class WithSpanTransformer {
     }
 
 
-    private static void installTransformer(Instrumentation inst) {
+    private void installTransformer(Instrumentation inst) {
 
         Log.debug("installing withSpanTransformer");
 
         new AgentBuilder.Default()
-                .type(TypeMatchers.create(Configuration.getInstance()))
+                .type(getTypeMatcher())
                 .and(new NotGeneratedClassMatcher())
                 .transform((builder, typeDescription, classLoader, module, protectionDomain) -> {
 
                     try {
-                        //the WithSpan annotation should be loadable from the same class loader of the application class
-                        AnnotationDescription withSpanAnnotationDescription = getWithSpanAnnotationDescription(classLoader);
-
-                        AnnotationDescription digmaMarkerAnnotationDescription = getDigmaMarkerAnnotationDescription();
 
                         Log.debug("transforming " + typeDescription.getCanonicalName() + " in class loader " + classLoader);
 
-                        return builder
-                                .visit(new MemberAttributeExtension.ForMethod()
-                                        .annotateMethod(withSpanAnnotationDescription)
-                                        .annotateMethod(digmaMarkerAnnotationDescription)
-                                        .on(MethodMatchers.create(typeDescription, Configuration.getInstance())));
+                        return annotate(builder, typeDescription, classLoader);
+
                     } catch (Throwable e) {
                         Log.error("got exception in bytebuddy transformer", e);
                         return builder;
@@ -139,7 +145,7 @@ public class WithSpanTransformer {
 
 
     @SuppressWarnings("unchecked")
-    private static AnnotationDescription getWithSpanAnnotationDescription(ClassLoader classLoader) throws Exception {
+    public static AnnotationDescription getWithSpanAnnotationDescription(ClassLoader classLoader) throws Exception {
 
 //        if (classLoader.getResource(WITH_SPAN_CLASS_NAME.replace('.', '/') + ".class") == null) {
 //            Log.debug("class loader "+classLoader+" doesn't have WithSpan class resource, trying to inject to system class loader");
@@ -155,7 +161,7 @@ public class WithSpanTransformer {
     }
 
 
-    private static AnnotationDescription getDigmaMarkerAnnotationDescription() {
+    public static AnnotationDescription getDigmaMarkerAnnotationDescription() {
 
         Log.debug("trying to load ExtendedObservability annotation class");
         AnnotationDescription annotationDescription = AnnotationDescription.Latent.Builder.ofType(ExtendedObservability.class).build();

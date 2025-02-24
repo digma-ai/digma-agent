@@ -20,7 +20,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MethodMatchersTests extends AbstractConfigurationTest {
+public class NamespaceMethodMatchersTests extends AbstractConfigurationTest {
 
 
     /*
@@ -38,14 +38,14 @@ public class MethodMatchersTests extends AbstractConfigurationTest {
         props.put(Configuration.DIGMA_AUTO_INSTRUMENT_PACKAGES_SYSTEM_PROPERTY,"com.nonexist;com.example.testpkg.testclasses.MyTestClass;com.test.package1.Package1Class");
         Configuration configuration = withProperties(props);
 
-        ElementMatcher<? super MethodDescription> matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(MyTestClass.class),configuration);
+        ElementMatcher<? super MethodDescription> matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(MyTestClass.class),configuration);
 
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(MyTestClass.class.getDeclaredMethod("myTestMethod1"))));
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(MyTestClass.class.getDeclaredMethod("myTestMethod2"))));
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(MyTestClass.class.getDeclaredMethod("test"))));
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(MyTestClass.class.getDeclaredMethod("test2"))));
 
-        matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(Package1Class.class),configuration);
+        matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(Package1Class.class),configuration);
 
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(Package1Class.class.getDeclaredMethod("myPackage1ClassMethod1"))));
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(Package1Class.class.getDeclaredMethod("myPackage1ClassMethod2"))));
@@ -59,12 +59,12 @@ public class MethodMatchersTests extends AbstractConfigurationTest {
         props.put(Configuration.DIGMA_AUTO_INSTRUMENT_PACKAGES_EXCLUDE_NAMES_SYSTEM_PROPERTY,"com.example.testpkg.testclasses.MyTestClass#myTestMethod2;com.test.package1.Package1Class#myPackage1ClassMethod2");
         Configuration configuration = withProperties(props);
 
-        ElementMatcher<? super MethodDescription> matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(MyTestClass.class),configuration);
+        ElementMatcher<? super MethodDescription> matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(MyTestClass.class),configuration);
 
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(MyTestClass.class.getDeclaredMethod("myTestMethod1"))));
         assertFalse(matcher.matches(new MethodDescription.ForLoadedMethod(MyTestClass.class.getDeclaredMethod("myTestMethod2"))));
 
-        matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(Package1Class.class),configuration);
+        matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(Package1Class.class),configuration);
 
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(Package1Class.class.getDeclaredMethod("myPackage1ClassMethod1"))));
         assertFalse(matcher.matches(new MethodDescription.ForLoadedMethod(Package1Class.class.getDeclaredMethod("myPackage1ClassMethod2"))));
@@ -77,12 +77,12 @@ public class MethodMatchersTests extends AbstractConfigurationTest {
         props.put(Configuration.DIGMA_AUTO_INSTRUMENT_PACKAGES_EXCLUDE_NAMES_SYSTEM_PROPERTY,"*Method2");
         Configuration configuration = withProperties(props);
 
-        ElementMatcher<? super MethodDescription> matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(MyTestClass.class),configuration);
+        ElementMatcher<? super MethodDescription> matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(MyTestClass.class),configuration);
 
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(MyTestClass.class.getDeclaredMethod("myTestMethod1"))));
         assertFalse(matcher.matches(new MethodDescription.ForLoadedMethod(MyTestClass.class.getDeclaredMethod("myTestMethod2"))));
 
-        matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(Package1Class.class),configuration);
+        matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(Package1Class.class),configuration);
 
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(Package1Class.class.getDeclaredMethod("myPackage1ClassMethod1"))));
         assertFalse(matcher.matches(new MethodDescription.ForLoadedMethod(Package1Class.class.getDeclaredMethod("myPackage1ClassMethod2"))));
@@ -95,12 +95,12 @@ public class MethodMatchersTests extends AbstractConfigurationTest {
         props.put(Configuration.DIGMA_AUTO_INSTRUMENT_PACKAGES_EXCLUDE_NAMES_SYSTEM_PROPERTY,"myTest*");
         Configuration configuration = withProperties(props);
 
-        ElementMatcher<? super MethodDescription> matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(MyTestClass.class),configuration);
+        ElementMatcher<? super MethodDescription> matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(MyTestClass.class),configuration);
 
         assertFalse(matcher.matches(new MethodDescription.ForLoadedMethod(MyTestClass.class.getDeclaredMethod("myTestMethod1"))));
         assertFalse(matcher.matches(new MethodDescription.ForLoadedMethod(MyTestClass.class.getDeclaredMethod("myTestMethod2"))));
 
-        matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(Package1Class.class),configuration);
+        matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(Package1Class.class),configuration);
 
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(Package1Class.class.getDeclaredMethod("myPackage1ClassMethod1"))));
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(Package1Class.class.getDeclaredMethod("myPackage1ClassMethod2"))));
@@ -113,21 +113,21 @@ public class MethodMatchersTests extends AbstractConfigurationTest {
         props.put(Configuration.DIGMA_AUTO_INSTRUMENT_PACKAGES_EXCLUDE_NAMES_SYSTEM_PROPERTY,"*method*");
         Configuration configuration = withProperties(props);
 
-        ElementMatcher<? super MethodDescription> matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(MyTestClass.class),configuration);
+        ElementMatcher<? super MethodDescription> matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(MyTestClass.class),configuration);
         assertFalse(matcher.matches(new MethodDescription.ForLoadedMethod(MyTestClass.class.getDeclaredMethod("myTestMethod1"))));
         assertFalse(matcher.matches(new MethodDescription.ForLoadedMethod(MyTestClass.class.getDeclaredMethod("myTestMethod2"))));
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(MyTestClass.class.getDeclaredMethod("test"))));
 
-        matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(Package1Class.class),configuration);
+        matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(Package1Class.class),configuration);
         assertFalse(matcher.matches(new MethodDescription.ForLoadedMethod(Package1Class.class.getDeclaredMethod("myPackage1ClassMethod1"))));
         assertFalse(matcher.matches(new MethodDescription.ForLoadedMethod(Package1Class.class.getDeclaredMethod("myPackage1ClassMethod2"))));
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(Package1Class.class.getDeclaredMethod("test"))));
 
-        matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(StubClass.class),configuration);
+        matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(StubClass.class),configuration);
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(StubClass.class.getDeclaredMethod("stubFunc"))));
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(StubClass.class.getDeclaredMethod("myNoneStub"))));
 
-        matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(MyStub.class),configuration);
+        matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(MyStub.class),configuration);
         assertFalse(matcher.matches(new MethodDescription.ForLoadedMethod(MyStub.class.getDeclaredMethod("myStubMethod"))));
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(MyStub.class.getDeclaredMethod("myStubFunction"))));
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(MyStub.class.getDeclaredMethod("myTest"))));
@@ -142,31 +142,31 @@ public class MethodMatchersTests extends AbstractConfigurationTest {
         props.put(Configuration.DIGMA_AUTO_INSTRUMENT_PACKAGES_EXCLUDE_NAMES_SYSTEM_PROPERTY,"*method*;bbb*;*func;com.example.testpkg.testclasses.MyTestClass#myTestMethod2;");
         Configuration configuration = withProperties(props);
 
-        ElementMatcher<? super MethodDescription> matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(MyTestClass.class),configuration);
+        ElementMatcher<? super MethodDescription> matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(MyTestClass.class),configuration);
         assertFalse(matcher.matches(new MethodDescription.ForLoadedMethod(MyTestClass.class.getDeclaredMethod("myTestMethod1"))));
         assertFalse(matcher.matches(new MethodDescription.ForLoadedMethod(MyTestClass.class.getDeclaredMethod("myTestMethod2"))));
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(MyTestClass.class.getDeclaredMethod("test"))));
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(MyTestClass.class.getDeclaredMethod("test2"))));
 
-        matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(Package1Class.class),configuration);
+        matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(Package1Class.class),configuration);
         assertFalse(matcher.matches(new MethodDescription.ForLoadedMethod(Package1Class.class.getDeclaredMethod("myPackage1ClassMethod1"))));
         assertFalse(matcher.matches(new MethodDescription.ForLoadedMethod(Package1Class.class.getDeclaredMethod("myPackage1ClassMethod2"))));
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(Package1Class.class.getDeclaredMethod("test"))));
 
-        matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(Package1Class2.class),configuration);
+        matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(Package1Class2.class),configuration);
         assertFalse(matcher.matches(new MethodDescription.ForLoadedMethod(Package1Class2.class.getDeclaredMethod("bbbbFunc"))));
 
-        matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(ClassInPackage1.class),configuration);
+        matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(ClassInPackage1.class),configuration);
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(ClassInPackage1.class.getDeclaredMethod("aaaa"))));
 
-        matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(Package2Class.class),configuration);
+        matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(Package2Class.class),configuration);
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(Package2Class.class.getDeclaredMethod("myFunctionOnPackage2Class"))));
 
-        matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(StubClass.class),configuration);
+        matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(StubClass.class),configuration);
         assertFalse(matcher.matches(new MethodDescription.ForLoadedMethod(StubClass.class.getDeclaredMethod("stubFunc"))));
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(StubClass.class.getDeclaredMethod("myNoneStub"))));
 
-        matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(MyStub.class),configuration);
+        matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(MyStub.class),configuration);
         assertFalse(matcher.matches(new MethodDescription.ForLoadedMethod(MyStub.class.getDeclaredMethod("myStubMethod"))));
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(MyStub.class.getDeclaredMethod("myStubFunction"))));
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(MyStub.class.getDeclaredMethod("myTest"))));
@@ -179,31 +179,31 @@ public class MethodMatchersTests extends AbstractConfigurationTest {
         props.put(Configuration.DIGMA_AUTO_INSTRUMENT_PACKAGES_EXCLUDE_NAMES_SYSTEM_PROPERTY,";myPackage1ClassMethod*;bbb*;*func;com.example.testpkg.testclasses.MyTestClass#myTest*;");
         Configuration configuration = withProperties(props);
 
-        ElementMatcher<? super MethodDescription> matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(MyTestClass.class),configuration);
+        ElementMatcher<? super MethodDescription> matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(MyTestClass.class),configuration);
         assertFalse(matcher.matches(new MethodDescription.ForLoadedMethod(MyTestClass.class.getDeclaredMethod("myTestMethod1"))));
         assertFalse(matcher.matches(new MethodDescription.ForLoadedMethod(MyTestClass.class.getDeclaredMethod("myTestMethod2"))));
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(MyTestClass.class.getDeclaredMethod("test"))));
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(MyTestClass.class.getDeclaredMethod("test2"))));
 
-        matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(Package1Class.class),configuration);
+        matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(Package1Class.class),configuration);
         assertFalse(matcher.matches(new MethodDescription.ForLoadedMethod(Package1Class.class.getDeclaredMethod("myPackage1ClassMethod1"))));
         assertFalse(matcher.matches(new MethodDescription.ForLoadedMethod(Package1Class.class.getDeclaredMethod("myPackage1ClassMethod2"))));
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(Package1Class.class.getDeclaredMethod("test"))));
 
-        matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(Package1Class2.class),configuration);
+        matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(Package1Class2.class),configuration);
         assertFalse(matcher.matches(new MethodDescription.ForLoadedMethod(Package1Class2.class.getDeclaredMethod("bbbbFunc"))));
 
-        matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(ClassInPackage1.class),configuration);
+        matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(ClassInPackage1.class),configuration);
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(ClassInPackage1.class.getDeclaredMethod("aaaa"))));
 
-        matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(Package2Class.class),configuration);
+        matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(Package2Class.class),configuration);
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(Package2Class.class.getDeclaredMethod("myFunctionOnPackage2Class"))));
 
-        matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(StubClass.class),configuration);
+        matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(StubClass.class),configuration);
         assertFalse(matcher.matches(new MethodDescription.ForLoadedMethod(StubClass.class.getDeclaredMethod("stubFunc"))));
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(StubClass.class.getDeclaredMethod("myNoneStub"))));
 
-        matcher = MethodMatchers.create(TypeDescription.ForLoadedType.of(MyStub.class),configuration);
+        matcher = NamespaceMethodMatchers.create(TypeDescription.ForLoadedType.of(MyStub.class),configuration);
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(MyStub.class.getDeclaredMethod("myStubMethod"))));
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(MyStub.class.getDeclaredMethod("myStubFunction"))));
         assertTrue(matcher.matches(new MethodDescription.ForLoadedMethod(MyStub.class.getDeclaredMethod("myTest"))));

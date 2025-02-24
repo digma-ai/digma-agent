@@ -10,9 +10,9 @@ import static io.opentelemetry.javaagent.extension.matcher.AgentElementMatchers.
 import static net.bytebuddy.matcher.ElementMatchers.*;
 import static org.digma.Matchers.getNamedElementJunction;
 
-public class TypeMatchers {
+public class NamespaceTypeMatchers {
 
-    private TypeMatchers() {
+    private NamespaceTypeMatchers() {
     }
 
     public static ElementMatcher<? super TypeDescription> create(Configuration configuration) {
