@@ -88,10 +88,10 @@ public class NamespaceTypeMatchers {
     }
 
     private static ElementMatcher<? super TypeDescription> kafkaTypes() {
-        return declaresMethod(isAnnotatedWith(named("org.springframework.kafka.annotation.KafkaListener")))
+        return isAnnotatedWith(named("org.springframework.kafka.annotation.KafkaListener"))
                 .or(
                         extendsClass(
-                                declaresMethod(isAnnotatedWith(named("org.springframework.kafka.annotation.KafkaListener")))));
+                                isAnnotatedWith(named("org.springframework.kafka.annotation.KafkaListener"))));
     }
 
 
