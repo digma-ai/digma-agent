@@ -83,7 +83,8 @@ public class NamespaceMethodMatchers {
                 "org.springframework.web.bind.annotation.PostMapping",
                 "org.springframework.web.bind.annotation.DeleteMapping",
                 "org.springframework.web.bind.annotation.PutMapping",
-                "org.springframework.web.bind.annotation.PatchMapping"
+                "org.springframework.web.bind.annotation.PatchMapping",
+                "org.springframework.kafka.annotation.KafkaListener"
         )).or(
                 hasSuperMethod(
                         isAnnotatedWith(namedOneOf(
